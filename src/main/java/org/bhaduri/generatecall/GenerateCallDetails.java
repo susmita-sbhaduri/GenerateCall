@@ -12,7 +12,7 @@ import java.io.IOException;
 import static org.apache.commons.io.comparator.LastModifiedFileComparator.*;
 import java.io.File;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.*;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -23,8 +23,6 @@ import java.util.List;
 public class GenerateCallDetails {
 
     public void getFileList() {
-        List<List<String>> recordTest = new ArrayList<>();
-
         String fullDataPath = "/home/sb/Documents/testing/EQ_test/";
         String nifty50Path = "/home/sb/Documents/testing/EQ_test_data/";
         File directory = new File(nifty50Path);
@@ -46,17 +44,23 @@ public class GenerateCallDetails {
             String scripLast = arrayPerScrip[fileCount - 1].getAbsolutePath();
             System.out.println("Previous file:" + scripPrev);
             System.out.println("Previous file:" + scripLast);
-            recordTest = lastLine(scripPrev, scripLast);
-            System.out.println("recordTest:" + recordTest.get(0));
+            
+            List<List<String>> recordPrev = new ArrayList<>();
+            List<List<String>> recordLast = new ArrayList<>();
+            
+            recordPrev = readCSV(scripPrev);
+            recordLast = readCSV(scripLast);
+            int indexL = prevIndex(recordPrev,recordLast);
+            System.out.println("indexL:" +  Integer.toString(indexL));
 
         }
     }
 
-    private List<List<String>> lastLine(String scripPrev, String scripLast) {
+    private List<List<String>> readCSV(String csvPath) {
         String line;
         List<List<String>> records = new ArrayList<>();
         try {
-            BufferedReader brPrev = new BufferedReader(new FileReader(scripPrev));
+            BufferedReader brPrev = new BufferedReader(new FileReader(csvPath));
 
             while ((line = brPrev.readLine()) != null) {
                 // use comma as separator  
@@ -70,6 +74,19 @@ public class GenerateCallDetails {
         }
         System.out.println("recordTest:" + records.get(records.size()-1).get(1));
         return records;
+    }
+    
+    private int prevIndex(List<List<String>> recordPrev, List<List<String>> recordLast) {
+        String prevTS = recordPrev.get(recordPrev.size()-1).get(1);
+        int indexLast = 0;
+        for(int i = 0; i < recordLast.size(); i++){
+            if (recordLast.get(i).get(1).equals(prevTS)){
+                indexLast=i;
+                break;
+            }                        
+        }
+        System.out.println("indexLast:" + Integer.toString(indexLast));
+        return indexLast;
     }
 
 }
