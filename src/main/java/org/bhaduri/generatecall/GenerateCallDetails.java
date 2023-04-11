@@ -28,30 +28,41 @@ public class GenerateCallDetails {
         File directory = new File(nifty50Path);
         String[] fileArray = directory.list();
         int dirCount = fileArray.length;
-        System.out.println("fTotal number of directories:" + dirCount);
+//        System.out.println("fTotal number of directories:" + dirCount);
 
         String scripFolderPath = "";
 
         for (int i = 0; i < dirCount; i++) {
             scripFolderPath = fullDataPath.concat(fileArray[i]);
             scripFolderPath = scripFolderPath.concat("/");
-            File filePerScripList = new File(scripFolderPath);
-            File[] arrayPerScrip = filePerScripList.listFiles();
+            File fileListPerScrip = new File(scripFolderPath);
+            File[] arrayPerScrip = fileListPerScrip.listFiles();
             int fileCount = arrayPerScrip.length;
             Arrays.sort(arrayPerScrip, LASTMODIFIED_COMPARATOR);
 
             String scripPrev = arrayPerScrip[fileCount - 2].getAbsolutePath();
             String scripLast = arrayPerScrip[fileCount - 1].getAbsolutePath();
-            System.out.println("Previous file:" + scripPrev);
-            System.out.println("Previous file:" + scripLast);
-            
+
+//            System.out.println("Previous file:" + scripPrev);
+//            System.out.println("Previous file:" + scripLast);
             List<List<String>> recordPrev = new ArrayList<>();
             List<List<String>> recordLast = new ArrayList<>();
-            
+
             recordPrev = readCSV(scripPrev);
             recordLast = readCSV(scripLast);
-            int indexL = prevIndex(recordPrev,recordLast);
-            System.out.println("indexL:" +  Integer.toString(indexL));
+//            System.out.println("First value:" + recordPrev.get(1).get(3));
+
+            List<List<Double>> recordPrevData = new ArrayList<>();
+            List<Double> row = new ArrayList<>();
+            for (int ii = 1; ii < recordPrev.size(); ii++) {
+                row.add(Double.valueOf(ii));
+                row.add(Double.valueOf(recordPrev.get(ii).get(3)));
+                recordPrevData.add(row); 
+                row = new ArrayList<>();
+            }
+            int indexL = prevIndex(recordPrev, recordLast);
+//            System.out.println("indexL:" +  Integer.toString(indexL));
+//            https://www.geeksforgeeks.org/arraylist-sublist-method-in-java-with-examples/
 
         }
     }
@@ -72,18 +83,18 @@ public class GenerateCallDetails {
             ex.printStackTrace();
 //                Logger.getLogger(PerMinuteResposeOfNSE.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println("recordTest:" + records.get(records.size()-1).get(1));
+        System.out.println("recordTest:" + records.get(records.size() - 1).get(1));
         return records;
     }
-    
+
     private int prevIndex(List<List<String>> recordPrev, List<List<String>> recordLast) {
-        String prevTS = recordPrev.get(recordPrev.size()-1).get(1);
+        String prevTS = recordPrev.get(recordPrev.size() - 1).get(1);
         int indexLast = 0;
-        for(int i = 0; i < recordLast.size(); i++){
-            if (recordLast.get(i).get(1).equals(prevTS)){
-                indexLast=i;
+        for (int i = 0; i < recordLast.size(); i++) {
+            if (recordLast.get(i).get(1).equals(prevTS)) {
+                indexLast = i;
                 break;
-            }                        
+            }
         }
         System.out.println("indexLast:" + Integer.toString(indexLast));
         return indexLast;
