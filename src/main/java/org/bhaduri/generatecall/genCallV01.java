@@ -36,6 +36,7 @@ public class genCallV01 {
     }
 
     private List<List<Double>> processInput(List<List<Double>> numericData) {
+        numericData.stream().forEach(oneRow-> oneRow.stream().forEach(eele-> System.out.println(eele)));
         List<List<Double>> smoothData = new ArrayList<>();
         List<Double> diffData = new ArrayList<>();
         for (int i = 0; i < numericData.size() - 1; i++) {
