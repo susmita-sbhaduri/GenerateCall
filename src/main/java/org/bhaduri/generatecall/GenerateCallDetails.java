@@ -60,7 +60,11 @@ public class GenerateCallDetails {
                 recordPrevData.add(row); 
                 row = new ArrayList<>();
             }
-            int indexL = prevIndex(recordPrev, recordLast);
+            int callCount = 3;
+            genCallV01 genCallVersion1 = new genCallV01();
+            String[] outPut = new String[1];
+            outPut = genCallVersion1.genCallV01(recordPrevData, callCount);
+//            int indexL = prevIndex(recordPrev, recordLast);
 //            System.out.println("indexL:" +  Integer.toString(indexL));
 //            https://www.geeksforgeeks.org/arraylist-sublist-method-in-java-with-examples/
 
