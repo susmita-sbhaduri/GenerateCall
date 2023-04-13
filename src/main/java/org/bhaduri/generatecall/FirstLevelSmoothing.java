@@ -4,31 +4,36 @@
  */
 package org.bhaduri.generatecall;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  *
  * @author sb
  */
-public class genCallV01 {
+public class FirstLevelSmoothing {
 
-    public String[] genCallV01(List<List<Double>> scripData, int callCount) {
+    private List<List<Double>> scripData;
+    private int callCount;
+
+    public FirstLevelSmoothing(List<List<Double>> scripData, int callCount) {
+        this.scripData = scripData;
+        this.callCount = callCount;
+    }
+
+    public String[] genCallV01() {
         List<List<Double>> smoothLvl1 = processInput(scripData);
-        Path output = Paths.get("output.txt");
-//        try {
-//            Files.write(output, smoothLvl1.get().get());
-//        } 
-//        catch (IOException e) {
-//            e.printStackTrace();
-//            System.out.println("exception:" + e);
+        String printFile = "/home/sb/b.txt";
+        PrintMatrix printMatrix = new PrintMatrix(smoothLvl1, printFile);
+        printMatrix.saveToFile();
+//        for (List<Double> list : smoothLvl1) {
+//            for (Double iPrint : list) {
+//                System.out.print(iPrint);
+//                System.out.print(",");
+//            }
+//            System.out.println();
 //        }
         String[] outPut = new String[1];
         outPut[0] = "done";
@@ -36,24 +41,24 @@ public class genCallV01 {
     }
 
     private List<List<Double>> processInput(List<List<Double>> numericData) {
-        numericData.stream().forEach(oneRow-> oneRow.stream().forEach(eele-> System.out.println(eele)));
+//        numericData.forEach((List<Double> oneRow) -> oneRow.forEach((Double ele) -> System.out.println(ele)));
+
         List<List<Double>> smoothData = new ArrayList<>();
         List<Double> diffData = new ArrayList<>();
         for (int i = 0; i < numericData.size() - 1; i++) {
             diffData.add(numericData.get(i + 1).get(1) - numericData.get(i).get(1));
         }
         int k = 0;
-        int k1 = 0;
         List<Double> rowSmooth = new ArrayList<>();
         rowSmooth.add(numericData.get(k).get(0));
         rowSmooth.add(numericData.get(k).get(1));
         smoothData.add(rowSmooth);
         rowSmooth = new ArrayList<>();
 
-        k1 = k1 + 1;
         int flag = 0;
 
-        while (k <= diffData.size()) {
+        while (k < diffData.size()) {
+//            System.out.println(k);
             if (diffData.get(k) > 0) {
                 if (flag == 2) {
                     rowSmooth.add(numericData.get(k).get(0));

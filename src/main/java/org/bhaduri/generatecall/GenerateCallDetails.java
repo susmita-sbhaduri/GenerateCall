@@ -61,9 +61,9 @@ public class GenerateCallDetails {
                 row = new ArrayList<>();
             }
             int callCount = 3;
-            genCallV01 genCallVersion1 = new genCallV01();
+            FirstLevelSmoothing firstLevelSmoothing = new FirstLevelSmoothing(recordPrevData, callCount);
             String[] outPut = new String[1];
-            outPut = genCallVersion1.genCallV01(recordPrevData, callCount);
+            outPut = firstLevelSmoothing.genCallV01();
 //            int indexL = prevIndex(recordPrev, recordLast);
 //            System.out.println("indexL:" +  Integer.toString(indexL));
 //            https://www.geeksforgeeks.org/arraylist-sublist-method-in-java-with-examples/
