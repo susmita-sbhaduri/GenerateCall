@@ -25,16 +25,17 @@ public class FirstLevelSmoothing {
 
     public String[] genCallV01() {
         List<List<Double>> smoothLvl1 = processInput(scripData);
-        String printFile = "/home/sb/b.txt";
-        PrintMatrix printMatrix = new PrintMatrix(smoothLvl1, printFile);
-        printMatrix.saveToFile();
-//        for (List<Double> list : smoothLvl1) {
-//            for (Double iPrint : list) {
-//                System.out.print(iPrint);
-//                System.out.print(",");
-//            }
-//            System.out.println();
-//        }
+//        String printFile = "/home/sb/b.txt";
+//        PrintMatrix printMatrix = new PrintMatrix(smoothLvl1, printFile);
+//        printMatrix.saveToFile();
+        CallData callInputData = new CallData();
+        callInputData.setCallCount(callCount);
+        callInputData.setInputSmoothedData(smoothLvl1);
+        
+        CallsVersion1 versionOneCall = new CallsVersion1(callInputData);
+        CallData callOutputData = new CallData();
+        
+        
         String[] outPut = new String[1];
         outPut[0] = "done";
         return outPut;
