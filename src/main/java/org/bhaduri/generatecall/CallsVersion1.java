@@ -24,6 +24,8 @@ public class CallsVersion1 {
 //        callData.setInputSmoothedData(inputData.getInputSmoothedData());
         CallData callOutputData = new CallData();
         int loopCounter = 0;
+        int loopCount = callData.getCallCount();
+        double margin = callData.getMarginValue();
         List<List<Double>> inputSmoothedData = callData.getInputSmoothedData();
         List<List<Double>> outputSmoothedData = new ArrayList<>();
         List<Double> row = new ArrayList<>();
@@ -104,11 +106,90 @@ public class CallsVersion1 {
         }
         String lastCall = "";
         Double retrace = 0.0;
+        Double retraceDown = 0.0;
+        Double retraceUp = 0.0;
+        
         if(call.equals("buy")){
             if((outputSmoothedData.size()-(loopCounter+3))==1){
+                retraceDown = inputSmoothedData.get(inputSmoothedData.size()-2).get(1) -
+                        inputSmoothedData.get(inputSmoothedData.size()-1).get(1);
+                retraceUp = inputSmoothedData.get(inputSmoothedData.size()-2).get(1) -
+                        outputSmoothedData.get(outputSmoothedData.size()-1).get(1);
+                if(((retraceDown/retraceUp)*100) > 62){
+                    lastCall="buy";
+                } else {
+                    if(((retraceDown/retraceUp)*100) < 38.2){
+                        lastCall="sell";
+                    } else{
+                        lastCall="no";
+                        if (loopCount==3){
+                            retrace= (retraceDown/retraceUp)*100;
+                        }
+                    }                    
+                }
                 
+            }else{
+                lastCall="sell";
             }
         }
+        if(call.equals("sell")){
+            lastCall="buy";
+        }
+        
+        
+//      ##############################################################################
+        Double riseLength = 0.0;
+        Double fallLength = 0.0;
+        if(call.equals("buy")){
+            if((outputSmoothedData.size()-(loopCounter+3))==1){
+                retraceDown = inputSmoothedData.get(inputSmoothedData.size()-2).get(1) -
+                        inputSmoothedData.get(inputSmoothedData.size()-1).get(1);
+                retraceUp = inputSmoothedData.get(inputSmoothedData.size()-2).get(1) -
+                        outputSmoothedData.get(outputSmoothedData.size()-1).get(1);
+                riseLength = inputSmoothedData.get(inputSmoothedData.size()-1).get(1) -
+                        outputSmoothedData.get(outputSmoothedData.size()-1).get(1);
+                
+                if (riseLength < ((margin / 100) * outputSmoothedData.get(outputSmoothedData.size() - 1).get(1))) {
+                    lastCall = "buy";
+                } else {
+                    if (((retraceDown / retraceUp) * 100) > 62) {
+                        lastCall = "buy";
+                    } else {
+                        if (((retraceDown / retraceUp) * 100) < 38.2) {
+                            lastCall = "sell";
+                        } else {
+                            lastCall = "no";
+                            if (loopCount == 3) {
+                                retrace = (retraceDown / retraceUp) * 100;
+                            }
+                        }
+                    }
+                }
+            }else{
+                riseLength = inputSmoothedData.get(inputSmoothedData.size()-1).get(1) -
+                        outputSmoothedData.get(outputSmoothedData.size()-1).get(1);
+                if (riseLength < ((margin / 100) * outputSmoothedData.get(outputSmoothedData.size() - 1).get(1))) {
+                    lastCall = "buy";
+                }else{
+                    lastCall = "sell";
+                }
+            }
+        }
+        
+        if (call.equals("sell")) {
+            fallLength = outputSmoothedData.get(outputSmoothedData.size() - 1).get(1)
+                    - inputSmoothedData.get(inputSmoothedData.size() - 1).get(1);
+            if (fallLength < ((margin / 100) * outputSmoothedData.get(outputSmoothedData.size() - 1).get(1))) {
+                lastCall = "sell";
+            } else {
+                lastCall = "buy";
+            }
+
+        }
+  //      ##############################################################################      
+        row.add(inputSmoothedData.get(inputSmoothedData.size() - 1).get(0));
+        row.add(inputSmoothedData.get(inputSmoothedData.size() - 1).get(1));
+        outputSmoothedData.add(row);
         
         callOutputData.setLastCall(" ");
         callOutputData.setOutputSmoothedData(outputSmoothedData);

@@ -16,6 +16,15 @@ public class CallData {
     private List<List<Double>> outputSmoothedData; 
     private String lastCall;
     private Double retraceValue;
+    private Double marginValue;
+
+    public Double getMarginValue() {
+        return marginValue;
+    }
+
+    public void setMarginValue(Double marginValue) {
+        this.marginValue = marginValue;
+    }
 
     public int getCallCount() {
         return callCount;

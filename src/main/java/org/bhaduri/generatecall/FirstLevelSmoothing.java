@@ -31,6 +31,7 @@ public class FirstLevelSmoothing {
         CallData callInputData = new CallData();
         callInputData.setCallCount(callCount);
         callInputData.setInputSmoothedData(smoothLvl1);
+        callInputData.setMarginValue(0.5);
         
         CallsVersion1 versionOneCall = new CallsVersion1(callInputData);
         CallData callOutputData = new CallData();
