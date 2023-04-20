@@ -11,15 +11,15 @@ import java.util.List;
  *
  * @author sb
  */
-public class CallsVersion1 {
+public class CallCreate {
 
     private CallData callData;
 
-    public CallsVersion1(CallData callData) {
+    public CallCreate(CallData callData) {
         this.callData = callData;
     }
 
-    public CallData callGenVersion1(CallData inputData) {
+    public CallData callGen(CallData inputData) {
 //        callData.setCallCount(inputData.getCallCount());
 //        callData.setInputSmoothedData(inputData.getInputSmoothedData());
         CallData callOutputData = new CallData();
@@ -104,8 +104,9 @@ public class CallsVersion1 {
                 trendFlag = 2; //downtrend
             }
         }
-        String lastCall = "";
-        Double retrace = 0.0;
+//      #####################################lastcallversion1#########################################
+        String lastCallVersionOne = "";
+        Double retraceVersionOne = 0.0;
         Double retraceDown = 0.0;
         Double retraceUp = 0.0;
         
@@ -116,28 +117,30 @@ public class CallsVersion1 {
                 retraceUp = inputSmoothedData.get(inputSmoothedData.size()-2).get(1) -
                         outputSmoothedData.get(outputSmoothedData.size()-1).get(1);
                 if(((retraceDown/retraceUp)*100) > 62){
-                    lastCall="buy";
+                    lastCallVersionOne="buy";
                 } else {
                     if(((retraceDown/retraceUp)*100) < 38.2){
-                        lastCall="sell";
+                        lastCallVersionOne="sell";
                     } else{
-                        lastCall="no";
+                        lastCallVersionOne="no";
                         if (loopCount==3){
-                            retrace= (retraceDown/retraceUp)*100;
+                            retraceVersionOne= (retraceDown/retraceUp)*100;
                         }
                     }                    
                 }
                 
             }else{
-                lastCall="sell";
+                lastCallVersionOne="sell";
             }
         }
         if(call.equals("sell")){
-            lastCall="buy";
+            lastCallVersionOne="buy";
         }
         
         
-//      ##############################################################################
+//      ###################################lastcallversiontwo###########################################
+        String lastCallVersionTwo = "";
+        Double retraceVersionTwo = 0.0;
         Double riseLength = 0.0;
         Double fallLength = 0.0;
         if(call.equals("buy")){
@@ -150,17 +153,17 @@ public class CallsVersion1 {
                         outputSmoothedData.get(outputSmoothedData.size()-1).get(1);
                 
                 if (riseLength < ((margin / 100) * outputSmoothedData.get(outputSmoothedData.size() - 1).get(1))) {
-                    lastCall = "buy";
+                    lastCallVersionTwo = "buy";
                 } else {
                     if (((retraceDown / retraceUp) * 100) > 62) {
-                        lastCall = "buy";
+                        lastCallVersionTwo = "buy";
                     } else {
                         if (((retraceDown / retraceUp) * 100) < 38.2) {
-                            lastCall = "sell";
+                            lastCallVersionTwo = "sell";
                         } else {
-                            lastCall = "no";
+                            lastCallVersionTwo = "no";
                             if (loopCount == 3) {
-                                retrace = (retraceDown / retraceUp) * 100;
+                                retraceVersionTwo = (retraceDown / retraceUp) * 100;
                             }
                         }
                     }
@@ -169,9 +172,9 @@ public class CallsVersion1 {
                 riseLength = inputSmoothedData.get(inputSmoothedData.size()-1).get(1) -
                         outputSmoothedData.get(outputSmoothedData.size()-1).get(1);
                 if (riseLength < ((margin / 100) * outputSmoothedData.get(outputSmoothedData.size() - 1).get(1))) {
-                    lastCall = "buy";
+                    lastCallVersionTwo = "buy";
                 }else{
-                    lastCall = "sell";
+                    lastCallVersionTwo = "sell";
                 }
             }
         }
@@ -180,9 +183,9 @@ public class CallsVersion1 {
             fallLength = outputSmoothedData.get(outputSmoothedData.size() - 1).get(1)
                     - inputSmoothedData.get(inputSmoothedData.size() - 1).get(1);
             if (fallLength < ((margin / 100) * outputSmoothedData.get(outputSmoothedData.size() - 1).get(1))) {
-                lastCall = "sell";
+                lastCallVersionTwo = "sell";
             } else {
-                lastCall = "buy";
+                lastCallVersionTwo = "buy";
             }
 
         }
@@ -191,9 +194,11 @@ public class CallsVersion1 {
         row.add(inputSmoothedData.get(inputSmoothedData.size() - 1).get(1));
         outputSmoothedData.add(row);
         
-        callOutputData.setLastCall(" ");
-        callOutputData.setOutputSmoothedData(outputSmoothedData);
-        callOutputData.setRetraceValue(0.0);
+        callOutputData.setLastCallVersionOne(lastCallVersionOne);
+        callOutputData.setRetraceVersionOne(retraceVersionOne);
+        callOutputData.setLastCallVersionTwo(lastCallVersionTwo);
+        callOutputData.setRetraceVersionTwo(retraceVersionTwo);
+        callOutputData.setOutputSmoothedData(outputSmoothedData);        
 
         return callOutputData;
     }

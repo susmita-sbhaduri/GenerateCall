@@ -4,8 +4,6 @@
  */
 package org.bhaduri.generatecall;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,33 +11,53 @@ import java.util.List;
  *
  * @author sb
  */
-public class FirstLevelSmoothing {
+public class Smoothing {
 
     private List<List<Double>> scripData;
     private int callCount;
 
-    public FirstLevelSmoothing(List<List<Double>> scripData, int callCount) {
+    public Smoothing(List<List<Double>> scripData, int callCount) {
         this.scripData = scripData;
         this.callCount = callCount;
     }
 
-    public String[] genCallV01() {
-        List<List<Double>> smoothLvl1 = processInput(scripData);
+    public List<SmoothData> genCall() {
+        List<List<Double>> smoothInput = new ArrayList<>();
+        smoothInput = scripData;
+        List<SmoothData> smoothResultData = new ArrayList<SmoothData>(); 
+        SmoothData eachSmoothData = new SmoothData();
 //        String printFile = "/home/sb/b.txt";
 //        PrintMatrix printMatrix = new PrintMatrix(smoothLvl1, printFile);
 //        printMatrix.saveToFile();
-        CallData callInputData = new CallData();
-        callInputData.setCallCount(callCount);
-        callInputData.setInputSmoothedData(smoothLvl1);
-        callInputData.setMarginValue(0.5);
-        
-        CallsVersion1 versionOneCall = new CallsVersion1(callInputData);
-        CallData callOutputData = new CallData();
-        
-        
-        String[] outPut = new String[1];
-        outPut[0] = "done";
-        return outPut;
+        CallData callInputData;
+        CallData callOutputData;
+        for (int i = 0; i < callCount; i++) {
+            smoothInput = processInput(smoothInput);
+            //
+            String printFile = "/home/sb/b.txt";
+            PrintMatrix printMatrix = new PrintMatrix(smoothInput, printFile);
+            printMatrix.saveToFile();
+            //
+            callInputData = new CallData();
+            callInputData.setCallCount(i + 1);
+            callInputData.setInputSmoothedData(smoothInput);
+            callInputData.setMarginValue(0.5);
+            CallCreate callCreate = new CallCreate(callInputData);
+            callOutputData = new CallData();
+            callOutputData = callCreate.callGen(callInputData);
+
+            eachSmoothData.setCallArrayOne(callOutputData.getLastCallVersionOne());
+            eachSmoothData.setCallArrayTwo(callOutputData.getLastCallVersionTwo());
+            eachSmoothData.setRetraceOne(callOutputData.getRetraceVersionOne());
+            eachSmoothData.setRetraceTwo(callOutputData.getRetraceVersionTwo());
+            smoothResultData.add(eachSmoothData);
+
+            eachSmoothData = new SmoothData();
+            smoothInput = new ArrayList<>();
+            smoothInput = callOutputData.getOutputSmoothedData();
+
+        }
+        return smoothResultData;
     }
 
     private List<List<Double>> processInput(List<List<Double>> numericData) {

@@ -14,8 +14,10 @@ public class CallData {
     private int callCount;
     private List<List<Double>> inputSmoothedData;
     private List<List<Double>> outputSmoothedData; 
-    private String lastCall;
-    private Double retraceValue;
+    private String lastCallVersionOne;
+    private String lastCallVersionTwo;
+    private Double retraceVersionOne;
+    private Double retraceVersionTwo;   
     private Double marginValue;
 
     public Double getMarginValue() {
@@ -49,20 +51,36 @@ public class CallData {
     public void setOutputSmoothedData(List<List<Double>> outputSmoothedData) {
         this.outputSmoothedData = outputSmoothedData;
     }
-
-    public String getLastCall() {
-        return lastCall;
+    public String getLastCallVersionOne() {
+        return lastCallVersionOne;
     }
 
-    public void setLastCall(String lastCall) {
-        this.lastCall = lastCall;
+    public void setLastCallVersionOne(String lastCallVersionOne) {
+        this.lastCallVersionOne = lastCallVersionOne;
     }
 
-    public Double getRetraceValue() {
-        return retraceValue;
+    public String getLastCallVersionTwo() {
+        return lastCallVersionTwo;
     }
 
-    public void setRetraceValue(Double retraceValue) {
-        this.retraceValue = retraceValue;
+    public void setLastCallVersionTwo(String lastCallVersionTwo) {
+        this.lastCallVersionTwo = lastCallVersionTwo;
     }
+
+    public Double getRetraceVersionOne() {
+        return retraceVersionOne;
+    }
+
+    public void setRetraceVersionOne(Double retraceVersionOne) {
+        this.retraceVersionOne = retraceVersionOne;
+    }
+
+    public Double getRetraceVersionTwo() {
+        return retraceVersionTwo;
+    }
+
+    public void setRetraceVersionTwo(Double retraceVersionTwo) {
+        this.retraceVersionTwo = retraceVersionTwo;
+    }
+    
 }
