@@ -77,7 +77,7 @@ public class CallCreate {
         }
 
         for (int i = startLevelOne; i < inputSmoothedData.size() - 2; i = i + 2) {
-            loopCounter=i;
+            loopCounter = i;
             if (inputSmoothedData.get(i).get(1) < inputSmoothedData.get(i + 2).get(1)) {
                 if (trendFlag == 2) {
                     if (inputSmoothedData.get(i - 1).get(1) < inputSmoothedData.get(i + 1).get(1)) {
@@ -104,54 +104,59 @@ public class CallCreate {
                 trendFlag = 2; //downtrend
             }
         }
+        //
+//        String printFile = "/home/sb/outputSmoothedData.txt";
+//        PrintMatrix printMatrix = new PrintMatrix(outputSmoothedData, printFile);
+//        printMatrix.saveToFile();
+        //
 //      #####################################lastcallversion1#########################################
+        String inputCallVersionTwo = call;
         String lastCallVersionOne = "";
         Double retraceVersionOne = 0.0;
         Double retraceDown = 0.0;
         Double retraceUp = 0.0;
-        
-        if(call.equals("buy")){
-            if((outputSmoothedData.size()-(loopCounter+3))==1){
-                retraceDown = inputSmoothedData.get(inputSmoothedData.size()-2).get(1) -
-                        inputSmoothedData.get(inputSmoothedData.size()-1).get(1);
-                retraceUp = inputSmoothedData.get(inputSmoothedData.size()-2).get(1) -
-                        outputSmoothedData.get(outputSmoothedData.size()-1).get(1);
-                if(((retraceDown/retraceUp)*100) > 62){
-                    lastCallVersionOne="buy";
+
+        if (call.equals("buy")) {
+            if ((inputSmoothedData.size() - (loopCounter + 3)) == 1) {
+                retraceDown = inputSmoothedData.get(inputSmoothedData.size() - 2).get(1)
+                        - inputSmoothedData.get(inputSmoothedData.size() - 1).get(1);
+                retraceUp = inputSmoothedData.get(inputSmoothedData.size() - 2).get(1)
+                        - outputSmoothedData.get(outputSmoothedData.size() - 1).get(1);
+                if (((retraceDown / retraceUp) * 100) > 62) {
+                    lastCallVersionOne = "buy";
                 } else {
-                    if(((retraceDown/retraceUp)*100) < 38.2){
-                        lastCallVersionOne="sell";
-                    } else{
-                        lastCallVersionOne="no";
-                        if (loopCount==3){
-                            retraceVersionOne= (retraceDown/retraceUp)*100;
+                    if (((retraceDown / retraceUp) * 100) < 38.2) {
+                        lastCallVersionOne = "sell";
+                    } else {
+                        lastCallVersionOne = "no";
+                        if (loopCount == 3) {
+                            retraceVersionOne = (retraceDown / retraceUp) * 100;
                         }
-                    }                    
+                    }
                 }
-                
-            }else{
-                lastCallVersionOne="sell";
+
+            } else {
+                lastCallVersionOne = "sell";
             }
         }
-        if(call.equals("sell")){
-            lastCallVersionOne="buy";
+        if (call.equals("sell")) {
+            lastCallVersionOne = "buy";
         }
-        
-        
+
 //      ###################################lastcallversiontwo###########################################
         String lastCallVersionTwo = "";
         Double retraceVersionTwo = 0.0;
         Double riseLength = 0.0;
         Double fallLength = 0.0;
-        if(call.equals("buy")){
-            if((outputSmoothedData.size()-(loopCounter+3))==1){
-                retraceDown = inputSmoothedData.get(inputSmoothedData.size()-2).get(1) -
-                        inputSmoothedData.get(inputSmoothedData.size()-1).get(1);
-                retraceUp = inputSmoothedData.get(inputSmoothedData.size()-2).get(1) -
-                        outputSmoothedData.get(outputSmoothedData.size()-1).get(1);
-                riseLength = inputSmoothedData.get(inputSmoothedData.size()-1).get(1) -
-                        outputSmoothedData.get(outputSmoothedData.size()-1).get(1);
-                
+        if (inputCallVersionTwo.equals("buy")) {
+            if ((inputSmoothedData.size() - (loopCounter + 3)) == 1) {
+                retraceDown = inputSmoothedData.get(inputSmoothedData.size() - 2).get(1)
+                        - inputSmoothedData.get(inputSmoothedData.size() - 1).get(1);
+                retraceUp = inputSmoothedData.get(inputSmoothedData.size() - 2).get(1)
+                        - outputSmoothedData.get(outputSmoothedData.size() - 1).get(1);
+                riseLength = inputSmoothedData.get(inputSmoothedData.size() - 1).get(1)
+                        - outputSmoothedData.get(outputSmoothedData.size() - 1).get(1);
+
                 if (riseLength < ((margin / 100) * outputSmoothedData.get(outputSmoothedData.size() - 1).get(1))) {
                     lastCallVersionTwo = "buy";
                 } else {
@@ -168,18 +173,18 @@ public class CallCreate {
                         }
                     }
                 }
-            }else{
-                riseLength = inputSmoothedData.get(inputSmoothedData.size()-1).get(1) -
-                        outputSmoothedData.get(outputSmoothedData.size()-1).get(1);
+            } else {
+                riseLength = inputSmoothedData.get(inputSmoothedData.size() - 1).get(1)
+                        - outputSmoothedData.get(outputSmoothedData.size() - 1).get(1);
                 if (riseLength < ((margin / 100) * outputSmoothedData.get(outputSmoothedData.size() - 1).get(1))) {
                     lastCallVersionTwo = "buy";
-                }else{
+                } else {
                     lastCallVersionTwo = "sell";
                 }
             }
         }
-        
-        if (call.equals("sell")) {
+
+        if (inputCallVersionTwo.equals("sell")) {
             fallLength = outputSmoothedData.get(outputSmoothedData.size() - 1).get(1)
                     - inputSmoothedData.get(inputSmoothedData.size() - 1).get(1);
             if (fallLength < ((margin / 100) * outputSmoothedData.get(outputSmoothedData.size() - 1).get(1))) {
@@ -189,7 +194,7 @@ public class CallCreate {
             }
 
         }
-  //      ##############################################################################      
+        //      ##############################################################################      
         row.add(inputSmoothedData.get(inputSmoothedData.size() - 1).get(0));
         row.add(inputSmoothedData.get(inputSmoothedData.size() - 1).get(1));
         outputSmoothedData.add(row);
@@ -198,7 +203,7 @@ public class CallCreate {
         callOutputData.setRetraceVersionOne(retraceVersionOne);
         callOutputData.setLastCallVersionTwo(lastCallVersionTwo);
         callOutputData.setRetraceVersionTwo(retraceVersionTwo);
-        callOutputData.setOutputSmoothedData(outputSmoothedData);        
+        callOutputData.setOutputSmoothedData(outputSmoothedData);
 
         return callOutputData;
     }

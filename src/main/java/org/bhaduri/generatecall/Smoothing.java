@@ -24,20 +24,18 @@ public class Smoothing {
     public List<SmoothData> genCall() {
         List<List<Double>> smoothInput = new ArrayList<>();
         smoothInput = scripData;
-        List<SmoothData> smoothResultData = new ArrayList<SmoothData>(); 
+        List<SmoothData> smoothResultData = new ArrayList<SmoothData>();
         SmoothData eachSmoothData = new SmoothData();
-//        String printFile = "/home/sb/b.txt";
-//        PrintMatrix printMatrix = new PrintMatrix(smoothLvl1, printFile);
-//        printMatrix.saveToFile();
+
         CallData callInputData;
         CallData callOutputData;
         for (int i = 0; i < callCount; i++) {
             smoothInput = processInput(smoothInput);
-            //
-            String printFile = "/home/sb/b.txt";
-            PrintMatrix printMatrix = new PrintMatrix(smoothInput, printFile);
-            printMatrix.saveToFile();
-            //
+////////////////////////////////////////////////////////////////////////
+//            String printFile = "/home/sb/b.txt";
+//            PrintMatrix printMatrix = new PrintMatrix(smoothInput, printFile);
+//            printMatrix.saveToFile();
+            ////////////////////////////////////////////////////////////////////////
             callInputData = new CallData();
             callInputData.setCallCount(i + 1);
             callInputData.setInputSmoothedData(smoothInput);

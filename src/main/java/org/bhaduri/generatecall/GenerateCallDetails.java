@@ -12,19 +12,16 @@ import java.io.IOException;
 import static org.apache.commons.io.comparator.LastModifiedFileComparator.*;
 import java.io.File;
 import java.util.Arrays;
-import java.util.*;
 import java.io.BufferedReader;
-import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GenerateCallDetails {
 
     public void getFileList() {
-        String fullDataPath = "/home/sb/Documents/testing/EQ_test/";
-        String nifty50Path = "/home/sb/Documents/testing/EQ_test_data/";
+        String fullDataPath = "/home/sb/Documents/java_testing/EQ_test/";
+        String nifty50Path = "/home/sb/Documents/java_testing/EQ_test_data/";
         File directory = new File(nifty50Path);
         String[] fileArray = directory.list();
         int dirCount = fileArray.length;
@@ -64,6 +61,28 @@ public class GenerateCallDetails {
             Smoothing smoothing = new Smoothing(recordPrevData, callCount);
             List<SmoothData> smoothData = new ArrayList<SmoothData>();  
             smoothData = smoothing.genCall();
+// filling up resultant data            
+            List<ResultData> resultDatas = new ArrayList<ResultData>();
+            ResultData eachResultData = new ResultData();
+            Double thresHold = 0.0;
+            thresHold=(0.5/100)*(recordPrevData.get(recordPrevData.size()-1).get(1))+
+                    ((0.5/100)*recordPrevData.get(recordPrevData.size()-1).get(1))*18/100;
+            String[] delimitedString = scripFolderPath.split("/");
+            eachResultData.setScripID(delimitedString[6]);//to be fixed
+            delimitedString = scripPrev.split("_");
+            eachResultData.setLastUpdateTime(delimitedString[3]);//to be fixed
+            eachResultData.setPrice(recordPrevData.get(recordPrevData.size()-1).get(1));
+            eachResultData.setLastCallVersionOne(smoothData.get(2).getCallArrayOne());
+            eachResultData.setLastCallVersionTwo(smoothData.get(2).getCallArrayTwo());
+            eachResultData.setTally("");
+            eachResultData.setRetraceVersionOne(smoothData.get(2).getRetraceOne());
+            eachResultData.setRetraceVersionTwo(smoothData.get(2).getRetraceTwo());
+            eachResultData.setPriceBrokerageGst(thresHold);
+            if(smoothData.get(2).getCallArrayOne().equals("buy")){
+                
+            }
+          
+            
 //            int indexL = prevIndex(recordPrev, recordLast);
 //            System.out.println("indexL:" +  Integer.toString(indexL));
 //            https://www.geeksforgeeks.org/arraylist-sublist-method-in-java-with-examples/
