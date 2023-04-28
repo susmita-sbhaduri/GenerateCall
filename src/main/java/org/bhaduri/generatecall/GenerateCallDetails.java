@@ -24,16 +24,16 @@ public class GenerateCallDetails {
         String fullDataPath = "/home/sb/Documents/java_testing/EQ_test/";
         String nifty50Path = "/home/sb/Documents/java_testing/EQ_test_data/";
         File directory = new File(nifty50Path);
-        String[] fileArray = directory.list();
-        List listFileArray = Arrays.asList(fileArray);
+//        String[] fileArray = directory.list();
+        List listFileArray = Arrays.asList(directory.list());
         Collections.sort(listFileArray);
-        int dirCount = fileArray.length;
-        System.out.println("listFileArray[1]:" + listFileArray.get(0));
+        int dirCount = listFileArray.size();
+//        System.out.println("listFileArray[1]:" + listFileArray.get(0).toString());
 
         String scripFolderPath = "";
-
+        List<ResultData> resultDatas = new ArrayList<ResultData>();
         for (int i = 0; i < dirCount; i++) {
-            scripFolderPath = fullDataPath.concat(listFileArray.get(i));
+            scripFolderPath = fullDataPath.concat(listFileArray.get(i).toString());
             scripFolderPath = scripFolderPath.concat("/");
             File fileListPerScrip = new File(scripFolderPath);
             File[] arrayPerScrip = fileListPerScrip.listFiles();
@@ -65,7 +65,7 @@ public class GenerateCallDetails {
 //            List<SmoothData> smoothData = new ArrayList<SmoothData>();  
 //            smoothData = smoothing.genCall();
 // filling up resultant data            
-            List<ResultData> resultDatas = new ArrayList<ResultData>();
+//            List<ResultData> resultDatas = new ArrayList<ResultData>();
 //            ResultData eachResultData = new ResultData();
 //            Double thresHold;
 //            thresHold=(0.5/100)*(recordPrevData.get(recordPrevData.size()-1).get(1))+
@@ -97,13 +97,18 @@ public class GenerateCallDetails {
             delimitedString = scripLast.split("_");
             lastUpdateDate = delimitedString[3];//to be fixed
             resultDatas.add(fillResult(recordLast, scripId, lastUpdateDate));
-            System.out.println("Done for :" + scripId);
+
 //            eachResultData = new ResultData();
 //            int indexL = prevIndex(recordPrev, recordLast);
 //            System.out.println("indexL:" +  Integer.toString(indexL));
 //            https://www.geeksforgeeks.org/arraylist-sublist-method-in-java-with-examples/
-
         }
+        System.out.println("Done");
+        ////////////////////////////////////////////////////////////////////////
+        String printFile = "/home/sb/b.txt";
+        PrintMatrix printMatrix = new PrintMatrix();
+        printMatrix.saveResultData(resultDatas, printFile);
+        ////////////////////////////////////////////////////////////////////////
     }
 
     private List<List<String>> readCSV(String csvPath) {
@@ -125,7 +130,7 @@ public class GenerateCallDetails {
         System.out.println("recordTest:" + records.get(records.size() - 1).get(1));
         return records;
     }
-    
+
     private ResultData fillResult(List<List<String>> recordStringData, String scripId, String lastUpdateDate) {
         List<List<Double>> recordData = new ArrayList<>();
         List<Double> row = new ArrayList<>();
@@ -143,7 +148,7 @@ public class GenerateCallDetails {
         Double thresHold;
         thresHold = (0.5 / 100) * (recordData.get(recordData.size() - 1).get(1))
                 + ((0.5 / 100) * recordData.get(recordData.size() - 1).get(1)) * 18 / 100;
-        
+
         eachResultData.setScripID(scripId);//to be fixed        
         eachResultData.setLastUpdateTime(lastUpdateDate);//to be fixed
         eachResultData.setPrice(recordData.get(recordData.size() - 1).get(1));
@@ -155,16 +160,24 @@ public class GenerateCallDetails {
 
         if (smoothData.get(2).getCallArrayOne().equals("buy")) {
             eachResultData.setPriceBrokerageGstOne(recordData.get(recordData.size() - 1).get(1) + thresHold);
+        } else {
+            if (smoothData.get(2).getCallArrayOne().equals("sell")) {
+                eachResultData.setPriceBrokerageGstOne(recordData.get(recordData.size() - 1).get(1) - thresHold);
+            } else {
+                eachResultData.setPriceBrokerageGstOne(recordData.get(recordData.size() - 1).get(1));
+            }
         }
-        if (smoothData.get(2).getCallArrayOne().equals("sell")) {
-            eachResultData.setPriceBrokerageGstOne(recordData.get(recordData.size() - 1).get(1) - thresHold);
-        }
+        
         if (smoothData.get(2).getCallArrayTwo().equals("buy")) {
             eachResultData.setPriceBrokerageGstTwo(recordData.get(recordData.size() - 1).get(1) + thresHold);
+        } else {
+            if (smoothData.get(2).getCallArrayTwo().equals("sell")) {
+                eachResultData.setPriceBrokerageGstTwo(recordData.get(recordData.size() - 1).get(1) - thresHold);
+            } else {
+                eachResultData.setPriceBrokerageGstTwo(recordData.get(recordData.size() - 1).get(1));
+            }
         }
-        if (smoothData.get(2).getCallArrayTwo().equals("sell")) {
-            eachResultData.setPriceBrokerageGstTwo(recordData.get(recordData.size() - 1).get(1) - thresHold);
-        }
+        
 //        System.out.println("recordTest:" + records.get(records.size() - 1).get(1));
         return eachResultData;
     }
