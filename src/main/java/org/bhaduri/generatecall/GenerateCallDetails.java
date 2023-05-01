@@ -47,67 +47,37 @@ public class GenerateCallDetails {
 //            System.out.println("Previous file:" + scripLast);
             List<List<String>> recordPrev = new ArrayList<>();
             List<List<String>> recordLast = new ArrayList<>();
-
+            
             recordPrev = readCSV(scripPrev);
             recordLast = readCSV(scripLast);
-//            System.out.println("First value:" + recordPrev.get(1).get(3));
 
-//            List<List<Double>> recordPrevData = new ArrayList<>();
-//            List<Double> row = new ArrayList<>();
-//            for (int ii = 1; ii < recordPrev.size(); ii++) {
-//                row.add(Double.valueOf(ii));
-//                row.add(Double.valueOf(recordPrev.get(ii).get(3)));
-//                recordPrevData.add(row); 
-//                row = new ArrayList<>();
-//            }
-//            int callCount = 3;
-//            Smoothing smoothing = new Smoothing(recordPrevData, callCount);
-//            List<SmoothData> smoothData = new ArrayList<SmoothData>();  
-//            smoothData = smoothing.genCall();
-// filling up resultant data            
-//            List<ResultData> resultDatas = new ArrayList<ResultData>();
-//            ResultData eachResultData = new ResultData();
-//            Double thresHold;
-//            thresHold=(0.5/100)*(recordPrevData.get(recordPrevData.size()-1).get(1))+
-//                    ((0.5/100)*recordPrevData.get(recordPrevData.size()-1).get(1))*18/100;
             String[] delimitedString = scripFolderPath.split("/");
             String scripId = delimitedString[6];//to be fixed
             delimitedString = scripPrev.split("_");
-            String lastUpdateDate = delimitedString[3];//to be fixed
-//            eachResultData.setPrice(recordPrevData.get(recordPrevData.size()-1).get(1));
-//            eachResultData.setLastCallVersionOne(smoothData.get(2).getCallArrayOne());
-//            eachResultData.setLastCallVersionTwo(smoothData.get(2).getCallArrayTwo());
-//            eachResultData.setTally("");
-//            eachResultData.setRetraceVersionOne(smoothData.get(2).getRetraceOne());
-//            eachResultData.setRetraceVersionTwo(smoothData.get(2).getRetraceTwo());
-//            
-//            if(smoothData.get(2).getCallArrayOne().equals("buy")){
-//                eachResultData.setPriceBrokerageGstOne(recordPrevData.get(recordPrevData.size()-1).get(1)+thresHold);
-//            }
-//            if(smoothData.get(2).getCallArrayOne().equals("sell")){
-//                eachResultData.setPriceBrokerageGstOne(recordPrevData.get(recordPrevData.size()-1).get(1)+thresHold);
-//            }
-//            if(smoothData.get(2).getCallArrayTwo().equals("buy")){
-//                eachResultData.setPriceBrokerageGstTwo(recordPrevData.get(recordPrevData.size()-1).get(1)+thresHold);
-//            }
-//            if(smoothData.get(2).getCallArrayTwo().equals("sell")){
-//                eachResultData.setPriceBrokerageGstTwo(recordPrevData.get(recordPrevData.size()-1).get(1)+thresHold);
-//            }
-            resultDatas.add(fillResult(recordPrev, scripId, lastUpdateDate));
+            String lastUpdateDate = delimitedString[3];//to be fixed            
+            List<List<Double>> recordDataPrev = new ArrayList<>();
+            recordDataPrev = readCSVData(recordPrev);
+            resultDatas.add(fillResult(recordDataPrev, scripId, lastUpdateDate));
+            
+            List<List<Double>> recordDataLast = new ArrayList<>();
+            recordDataLast = readCSVData(recordLast);
             delimitedString = scripLast.split("_");
             lastUpdateDate = delimitedString[3];//to be fixed
-            resultDatas.add(fillResult(recordLast, scripId, lastUpdateDate));
-
-//            eachResultData = new ResultData();
-//            int indexL = prevIndex(recordPrev, recordLast);
-//            System.out.println("indexL:" +  Integer.toString(indexL));
-//            https://www.geeksforgeeks.org/arraylist-sublist-method-in-java-with-examples/
+            resultDatas.add(fillResult(recordDataLast, scripId, lastUpdateDate));
+            
+            List<List<String>> recordLastNext = new ArrayList<>();
+            int indexL = prevIndex(recordPrev, recordLast);
+            List<List<Double>> recordDataLastNext = new ArrayList<>();
+            recordDataLastNext = recordDataLast;
         }
-        System.out.println("Done");
-        ////////////////////////////////////////////////////////////////////////
-        String printFile = "/home/sb/b.txt";
-        PrintMatrix printMatrix = new PrintMatrix();
-        printMatrix.saveResultData(resultDatas, printFile);
+//        System.out.println("Done");
+//        ////////////////////////////////////////////////////////////////////////
+//        int indexL = prevIndex(recordPrev, recordLast);
+//        System.out.println("indexL:" +  Integer.toString(indexL));
+//        https://www.geeksforgeeks.org/arraylist-sublist-method-in-java-with-examples/
+//        String printFile = "/home/sb/b.txt";
+//        PrintMatrix printMatrix = new PrintMatrix();
+//        printMatrix.saveResultData(resultDatas, printFile);
         ////////////////////////////////////////////////////////////////////////
     }
 
@@ -130,16 +100,29 @@ public class GenerateCallDetails {
         System.out.println("recordTest:" + records.get(records.size() - 1).get(1));
         return records;
     }
-
-    private ResultData fillResult(List<List<String>> recordStringData, String scripId, String lastUpdateDate) {
+    
+    private List<List<Double>> readCSVData(List<List<String>> csvStringData) {
         List<List<Double>> recordData = new ArrayList<>();
         List<Double> row = new ArrayList<>();
-        for (int ii = 1; ii < recordStringData.size(); ii++) {
+        for (int ii = 1; ii < csvStringData.size(); ii++) {
             row.add(Double.valueOf(ii));
-            row.add(Double.valueOf(recordStringData.get(ii).get(3)));
+            row.add(Double.valueOf(csvStringData.get(ii).get(3)));
             recordData.add(row);
             row = new ArrayList<>();
         }
+        return recordData;
+    }
+
+    private ResultData fillResult(List<List<Double>> recordData, String scripId, String lastUpdateDate) {
+//        List<List<Double>> recordData = new ArrayList<>();
+//        recordData = readCSVData(recordStringData);
+//        List<Double> row = new ArrayList<>();
+//        for (int ii = 1; ii < recordStringData.size(); ii++) {
+//            row.add(Double.valueOf(ii));
+//            row.add(Double.valueOf(recordStringData.get(ii).get(3)));
+//            recordData.add(row);
+//            row = new ArrayList<>();
+//        }
         int callCount = 3;
         Smoothing smoothing = new Smoothing(recordData, callCount);
         List<SmoothData> smoothData = new ArrayList<SmoothData>();
@@ -191,8 +174,8 @@ public class GenerateCallDetails {
                 break;
             }
         }
-        System.out.println("indexLast:" + Integer.toString(indexLast));
-        return indexLast;
+        System.out.println("indexLast:" + Integer.toString(indexLast+1));
+        return indexLast+1;
     }
 
 }
