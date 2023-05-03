@@ -68,7 +68,26 @@ public class GenerateCallDetails {
             List<List<String>> recordLastNext = new ArrayList<>();
             int indexL = prevIndex(recordPrev, recordLast);
             List<List<Double>> recordDataLastNext = new ArrayList<>();
-            recordDataLastNext = recordDataLast;
+            
+            List<Double> row = new ArrayList<>();
+            for (int ii = indexL; ii < recordDataLast.size(); ii++) {
+                row.add(0, recordDataLast.get(ii).get(0));
+                row.add(1, recordDataLast.get(ii).get(1));
+                recordDataLastNext.add(row);
+                row = new ArrayList<>();
+            }
+            double lastDataFromPrev = recordDataPrev.get(recordDataPrev.size()-1).get(1);
+            double threshold = (0.5/100)*lastDataFromPrev;
+            if(resultDatas.get(0).getLastCallVersionOne().equals("buy")){
+                for (int ii = 0; ii < recordDataLastNext.size(); ii++){
+                    if(recordDataLastNext.get(ii).get(1)<lastDataFromPrev){
+                        resultDatas.get(0).setTally("success");
+                        break;
+                    }
+                }
+                
+            }
+            System.out.println("Done");
         }
 //        System.out.println("Done");
 //        ////////////////////////////////////////////////////////////////////////
@@ -114,15 +133,7 @@ public class GenerateCallDetails {
     }
 
     private ResultData fillResult(List<List<Double>> recordData, String scripId, String lastUpdateDate) {
-//        List<List<Double>> recordData = new ArrayList<>();
-//        recordData = readCSVData(recordStringData);
-//        List<Double> row = new ArrayList<>();
-//        for (int ii = 1; ii < recordStringData.size(); ii++) {
-//            row.add(Double.valueOf(ii));
-//            row.add(Double.valueOf(recordStringData.get(ii).get(3)));
-//            recordData.add(row);
-//            row = new ArrayList<>();
-//        }
+
         int callCount = 3;
         Smoothing smoothing = new Smoothing(recordData, callCount);
         List<SmoothData> smoothData = new ArrayList<SmoothData>();
@@ -174,8 +185,8 @@ public class GenerateCallDetails {
                 break;
             }
         }
-        System.out.println("indexLast:" + Integer.toString(indexLast+1));
-        return indexLast+1;
+        System.out.println("indexLast:" + Integer.toString(indexLast));
+        return indexLast;
     }
 
 }
