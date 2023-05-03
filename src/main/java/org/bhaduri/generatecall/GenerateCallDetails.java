@@ -77,16 +77,14 @@ public class GenerateCallDetails {
                 row = new ArrayList<>();
             }
             double lastDataFromPrev = recordDataPrev.get(recordDataPrev.size()-1).get(1);
-            double threshold = (0.5/100)*lastDataFromPrev;
-            if(resultDatas.get(0).getLastCallVersionOne().equals("buy")){
-                for (int ii = 0; ii < recordDataLastNext.size(); ii++){
-                    if(recordDataLastNext.get(ii).get(1)<lastDataFromPrev){
-                        resultDatas.get(0).setTally("success");
-                        break;
-                    }
-                }
-                
-            }
+            String tally="";
+            
+            tally = fillTally(resultDatas.get(0).getLastCallVersionOne(),recordDataLastNext,lastDataFromPrev);
+            resultDatas.get(0).setTallyVersionOne(tally);
+            tally="";
+            tally = fillTally(resultDatas.get(0).getLastCallVersionTwo(),recordDataLastNext,lastDataFromPrev);
+            resultDatas.get(0).setTallyVersionTwo(tally);
+            
             System.out.println("Done");
         }
 //        System.out.println("Done");
@@ -99,7 +97,42 @@ public class GenerateCallDetails {
 //        printMatrix.saveResultData(resultDatas, printFile);
         ////////////////////////////////////////////////////////////////////////
     }
-
+    
+    private String fillTally(String resultTallyData, List<List<Double>> dataNext, Double lastData) {
+        double threshold = (0.5 / 100) * lastData;
+        String tally ="";
+        if (resultTallyData.equals("buy")) {
+            for (int ii = 0; ii < dataNext.size(); ii++) {
+                if (dataNext.get(ii).get(1) < lastData) {
+                    tally = "success";
+                    break;
+                }else{
+                    if (dataNext.get(ii).get(1) < (lastData+threshold)) {
+                        tally = "success";
+                        break;
+                    }else{
+                        tally  = "success";
+                    }
+                }
+            }
+        }
+        if (resultTallyData.equals("sell")) {
+            for (int ii = 0; ii < dataNext.size(); ii++) {
+                if (dataNext.get(ii).get(1) > lastData) {
+                    tally = "success";
+                    break;
+                }else{
+                    if (dataNext.get(ii).get(1) > (lastData-threshold)) {
+                        tally = "success";
+                        break;
+                    }else{
+                        tally = "success";
+                    }
+                }
+            }
+        }
+        return tally;
+    }
     private List<List<String>> readCSV(String csvPath) {
         String line;
         List<List<String>> records = new ArrayList<>();
@@ -148,7 +181,8 @@ public class GenerateCallDetails {
         eachResultData.setPrice(recordData.get(recordData.size() - 1).get(1));
         eachResultData.setLastCallVersionOne(smoothData.get(2).getCallArrayOne());
         eachResultData.setLastCallVersionTwo(smoothData.get(2).getCallArrayTwo());
-        eachResultData.setTally("");
+        eachResultData.setTallyVersionOne("");
+        eachResultData.setTallyVersionTwo("");
         eachResultData.setRetraceVersionOne(smoothData.get(2).getRetraceOne());
         eachResultData.setRetraceVersionTwo(smoothData.get(2).getRetraceTwo());
 
