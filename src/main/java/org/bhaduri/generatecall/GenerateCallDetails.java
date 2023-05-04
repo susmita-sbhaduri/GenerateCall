@@ -79,11 +79,11 @@ public class GenerateCallDetails {
             double lastDataFromPrev = recordDataPrev.get(recordDataPrev.size()-1).get(1);
             String tally="";
             
-            tally = fillTally(resultDatas.get(0).getLastCallVersionOne(),recordDataLastNext,lastDataFromPrev);
-            resultDatas.get(0).setTallyVersionOne(tally);
+            tally = fillTally(resultDatas.get(resultDatas.size()-2).getLastCallVersionOne(),recordDataLastNext,lastDataFromPrev);
+            resultDatas.get(resultDatas.size()-2).setTallyVersionOne(tally);
             tally="";
-            tally = fillTally(resultDatas.get(0).getLastCallVersionTwo(),recordDataLastNext,lastDataFromPrev);
-            resultDatas.get(0).setTallyVersionTwo(tally);
+            tally = fillTally(resultDatas.get(resultDatas.size()-2).getLastCallVersionTwo(),recordDataLastNext,lastDataFromPrev);
+            resultDatas.get(resultDatas.size()-2).setTallyVersionTwo(tally);
             
             System.out.println("Done");
         }
@@ -103,15 +103,20 @@ public class GenerateCallDetails {
         String tally ="";
         if (resultTallyData.equals("buy")) {
             for (int ii = 0; ii < dataNext.size(); ii++) {
+//                System.out.println(dataNext.get(ii).get(1));
                 if (dataNext.get(ii).get(1) < lastData) {
                     tally = "success";
                     break;
-                }else{
-                    if (dataNext.get(ii).get(1) < (lastData+threshold)) {
+                }
+            }
+            if (tally.equals("")) {
+                for (int ii = 0; ii < dataNext.size(); ii++) {
+                    if (dataNext.get(ii).get(1) < (lastData + threshold)) {
                         tally = "success";
                         break;
-                    }else{
-                        tally  = "success";
+                    } else {
+                        tally = "failure";
+                        System.out.println(dataNext.get(ii).get(1));
                     }
                 }
             }
@@ -121,12 +126,15 @@ public class GenerateCallDetails {
                 if (dataNext.get(ii).get(1) > lastData) {
                     tally = "success";
                     break;
-                }else{
-                    if (dataNext.get(ii).get(1) > (lastData-threshold)) {
+                }
+            }
+            if (tally.equals("")) {
+                for (int ii = 0; ii < dataNext.size(); ii++) {
+                    if (dataNext.get(ii).get(1) > (lastData - threshold)) {
                         tally = "success";
                         break;
-                    }else{
-                        tally = "success";
+                    } else {
+                        tally = "failure";
                     }
                 }
             }
