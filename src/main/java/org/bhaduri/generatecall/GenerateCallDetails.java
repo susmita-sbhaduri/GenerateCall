@@ -47,10 +47,11 @@ public class GenerateCallDetails {
 //            System.out.println("Previous file:" + scripLast);
             List<List<String>> recordPrev = new ArrayList<>();
             List<List<String>> recordLast = new ArrayList<>();
-            
+                        
             recordPrev = readCSV(scripPrev);
             recordLast = readCSV(scripLast);
 
+            
             String[] delimitedString = scripFolderPath.split("/");
             String scripId = delimitedString[6];//to be fixed
             delimitedString = scripPrev.split("_");
@@ -58,6 +59,8 @@ public class GenerateCallDetails {
             List<List<Double>> recordDataPrev = new ArrayList<>();
             recordDataPrev = readCSVData(recordPrev);
             resultDatas.add(fillResult(recordDataPrev, scripId, lastUpdateDate));
+            
+            System.out.println(lastUpdateDate);
             
             List<List<Double>> recordDataLast = new ArrayList<>();
             recordDataLast = readCSVData(recordLast);
