@@ -69,4 +69,29 @@ public class PrintMatrix {
         }
 
     }
+    public void saveListData(List<List<String>> dataToPrint, String printFile) {
+        try {
+            File output = new File(printFile);
+            output.createNewFile();
+            PrintStream write = new PrintStream(output);
+            for (int i = 0; i < dataToPrint.size(); i++) {                
+                write.print(dataToPrint.get(i).get(0)
+                +","+dataToPrint.get(i).get(1)
+                +","+dataToPrint.get(i).get(2)
+                +","+dataToPrint.get(i).get(3)
+                +","+dataToPrint.get(i).get(4)
+                +","+dataToPrint.get(i).get(5)
+                +","+dataToPrint.get(i).get(6)
+                +","+dataToPrint.get(i).get(7)
+                +","+dataToPrint.get(i).get(8)
+                +","+dataToPrint.get(i).get(9)
+                +","+dataToPrint.get(i).get(10));
+                write.println();
+            }
+            write.close();
+        } catch (IOException ex) {
+            Logger.getLogger(PrintMatrix.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
 }

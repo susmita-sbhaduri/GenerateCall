@@ -23,13 +23,33 @@ public class GenerateCallDetails {
     public void getFileList() {
         String fullDataPath = "/home/sb/Documents/java_testing/EQ_test/";
         String nifty50Path = "/home/sb/Documents/java_testing/EQ_test_data/";
+        String callDataPath = "/home/sb/Documents/java_testing/callsboth.csv";
+        
         File directory = new File(nifty50Path);
 //        String[] fileArray = directory.list();
         List listFileArray = Arrays.asList(directory.list());
         Collections.sort(listFileArray);
         int dirCount = listFileArray.size();
-//        System.out.println("listFileArray[1]:" + listFileArray.get(0).toString());
-
+        ////////for extracting lastupdate date
+//        System.out.println("listFileArray[1]:" + fullDataPath.concat(listFileArray.get(0).toString()).concat("/"));
+        String firstScripFolder = fullDataPath.concat(listFileArray.get(0).toString()).concat("/");
+        File fileListFirstScrip = new File(firstScripFolder);
+        File[] arrayFirstScrip = fileListFirstScrip.listFiles();
+        Arrays.sort(arrayFirstScrip, LASTMODIFIED_COMPARATOR);
+        String firstScripPrev = arrayFirstScrip[arrayFirstScrip.length - 2].getAbsolutePath();
+        String[] delimitedString = firstScripPrev.split("_"); // to be fixed as per the path
+        
+        List<List<String>> recordCalls = new ArrayList<>();
+        recordCalls = readCSV(callDataPath);
+        List<List<String>> recordCallUpdated = new ArrayList<>();
+        
+        for (int ii = 0; ii < recordCalls.size(); ii++) {
+            if(!recordCalls.get(ii).get(1).equals(delimitedString[3])){
+                 recordCallUpdated.add(recordCalls.get(ii));
+            }           
+        }
+        ////////for extracting lastupdate date
+        
         String scripFolderPath = "";
         List<ResultData> resultDatas = new ArrayList<ResultData>();
         for (int i = 0; i < dirCount; i++) {
@@ -52,7 +72,7 @@ public class GenerateCallDetails {
             recordLast = readCSV(scripLast);
 
             
-            String[] delimitedString = scripFolderPath.split("/");
+            delimitedString = scripFolderPath.split("/");
             String scripId = delimitedString[6];//to be fixed
             delimitedString = scripPrev.split("_");
             String lastUpdateDate = delimitedString[3];//to be fixed            
@@ -88,16 +108,34 @@ public class GenerateCallDetails {
             tally = fillTally(resultDatas.get(resultDatas.size()-2).getLastCallVersionTwo(),recordDataLastNext,lastDataFromPrev);
             resultDatas.get(resultDatas.size()-2).setTallyVersionTwo(tally);
             
-            System.out.println("Done");
+//            System.out.println("Done");
         }
-//        System.out.println("Done");
+        
+        List<String> rowToAdd = new ArrayList<>();
+        for (int ii = 0; ii < resultDatas.size(); ii++) {
+            rowToAdd.add(0, resultDatas.get(ii).getScripID());
+            rowToAdd.add(1, resultDatas.get(ii).getLastUpdateTime());
+            rowToAdd.add(2, resultDatas.get(ii).getPrice().toString());
+            rowToAdd.add(3, resultDatas.get(ii).getLastCallVersionOne());
+            rowToAdd.add(4, resultDatas.get(ii).getLastCallVersionTwo());
+            rowToAdd.add(5, resultDatas.get(ii).getTallyVersionOne());
+            rowToAdd.add(6, resultDatas.get(ii).getTallyVersionTwo());
+            rowToAdd.add(7, resultDatas.get(ii).getRetraceVersionOne().toString());
+            rowToAdd.add(8, resultDatas.get(ii).getRetraceVersionTwo().toString());
+            rowToAdd.add(9, resultDatas.get(ii).getPriceBrokerageGstOne().toString());
+            rowToAdd.add(10, resultDatas.get(ii).getPriceBrokerageGstTwo().toString());
+            recordCallUpdated.add(rowToAdd);
+            rowToAdd = new ArrayList<>();
+        }
+        
 //        ////////////////////////////////////////////////////////////////////////
 //        int indexL = prevIndex(recordPrev, recordLast);
 //        System.out.println("indexL:" +  Integer.toString(indexL));
 //        https://www.geeksforgeeks.org/arraylist-sublist-method-in-java-with-examples/
-//        String printFile = "/home/sb/b.txt";
-//        PrintMatrix printMatrix = new PrintMatrix();
-//        printMatrix.saveResultData(resultDatas, printFile);
+        String printFile = "/home/sb/b.txt";
+        PrintMatrix printMatrix = new PrintMatrix();
+        printMatrix.saveListData(recordCallUpdated, printFile);
+        System.out.println("Done");
         ////////////////////////////////////////////////////////////////////////
     }
     
@@ -160,7 +198,7 @@ public class GenerateCallDetails {
             ex.printStackTrace();
 //                Logger.getLogger(PerMinuteResposeOfNSE.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println("recordTest:" + records.get(records.size() - 1).get(1));
+//        System.out.println("recordTest:" + records.get(records.size() - 1).get(1));
         return records;
     }
     
