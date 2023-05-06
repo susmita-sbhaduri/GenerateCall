@@ -80,8 +80,7 @@ public class GenerateCallDetails {
             recordDataPrev = readCSVData(recordPrev);
             resultDatas.add(fillResult(recordDataPrev, scripId, lastUpdateDate));
             
-            System.out.println(lastUpdateDate);
-            
+                    
             List<List<Double>> recordDataLast = new ArrayList<>();
             recordDataLast = readCSVData(recordLast);
             delimitedString = scripLast.split("_");
@@ -176,6 +175,7 @@ public class GenerateCallDetails {
                         break;
                     } else {
                         tally = "failure";
+                        System.out.println(dataNext.get(ii).get(1));
                     }
                 }
             }
@@ -268,7 +268,7 @@ public class GenerateCallDetails {
                 break;
             }
         }
-        System.out.println("indexLast:" + Integer.toString(indexLast));
+//        System.out.println("indexLast:" + Integer.toString(indexLast));
         return indexLast;
     }
 
