@@ -24,6 +24,7 @@ public class GenerateCallDetails {
         String fullDataPath = "/home/sb/Documents/java_testing/EQ_test/";
         String nifty50Path = "/home/sb/Documents/java_testing/EQ_test_data/";
         String callDataPath = "/home/sb/Documents/java_testing/calls9thmayjava.csv";
+
         
         File directory = new File(nifty50Path);
 //        String[] fileArray = directory.list();
@@ -131,6 +132,7 @@ public class GenerateCallDetails {
 //        int indexL = prevIndex(recordPrev, recordLast);
 //        System.out.println("indexL:" +  Integer.toString(indexL));
 //        https://www.geeksforgeeks.org/arraylist-sublist-method-in-java-with-examples/
+//        String printFile = "/home/sb/Documents/java_testing/calls10thmayjava.csv";
         String printFile = "/home/sb/Documents/java_testing/calls10thmayjava.csv";
         PrintMatrix printMatrix = new PrintMatrix();
         printMatrix.saveListData(recordCallUpdated, printFile);
