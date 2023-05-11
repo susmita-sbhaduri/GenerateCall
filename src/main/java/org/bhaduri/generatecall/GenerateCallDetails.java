@@ -23,9 +23,8 @@ public class GenerateCallDetails {
     public void getFileList() {
         String fullDataPath = "/home/sb/Documents/java_testing/EQ_test/";
         String nifty50Path = "/home/sb/Documents/java_testing/EQ_test_data/";
-        String callDataPath = "/home/sb/Documents/java_testing/calls9thmayjava.csv";
+        String callDataPath = "/home/sb/Documents/java_testing/calls10thmayjava.csv";
 
-        
         File directory = new File(nifty50Path);
 //        String[] fileArray = directory.list();
         List listFileArray = Arrays.asList(directory.list());
@@ -39,18 +38,19 @@ public class GenerateCallDetails {
         Arrays.sort(arrayFirstScrip, LASTMODIFIED_COMPARATOR);
         String firstScripPrev = arrayFirstScrip[arrayFirstScrip.length - 2].getAbsolutePath();
         String[] delimitedString = firstScripPrev.split("_"); // to be fixed as per the path
-        
+
         List<List<String>> recordCalls = new ArrayList<>();
         recordCalls = readCSV(callDataPath);
         List<List<String>> recordCallUpdated = new ArrayList<>();
-        
+        List<List<String>> recordPriceUpdated = new ArrayList<>();
+
         for (int ii = 0; ii < recordCalls.size(); ii++) {
-            if(!recordCalls.get(ii).get(1).equals(delimitedString[3])){
-                 recordCallUpdated.add(recordCalls.get(ii));
-            }           
+            if (!recordCalls.get(ii).get(1).equals(delimitedString[3])) {
+                recordCallUpdated.add(recordCalls.get(ii));
+            }
         }
+
         ////////for extracting lastupdate date
-        
         String scripFolderPath = "";
         List<ResultData> resultDatas = new ArrayList<ResultData>();
         for (int i = 0; i < dirCount; i++) {
@@ -68,11 +68,10 @@ public class GenerateCallDetails {
 //            System.out.println("Previous file:" + scripLast);
             List<List<String>> recordPrev = new ArrayList<>();
             List<List<String>> recordLast = new ArrayList<>();
-                        
+
             recordPrev = readCSV(scripPrev);
             recordLast = readCSV(scripLast);
 
-            
             delimitedString = scripFolderPath.split("/");
             String scripId = delimitedString[6];//to be fixed
             delimitedString = scripPrev.split("_");
@@ -80,18 +79,17 @@ public class GenerateCallDetails {
             List<List<Double>> recordDataPrev = new ArrayList<>();
             recordDataPrev = readCSVData(recordPrev);
             resultDatas.add(fillResult(recordDataPrev, scripId, lastUpdateDate));
-            
-                    
+
             List<List<Double>> recordDataLast = new ArrayList<>();
             recordDataLast = readCSVData(recordLast);
             delimitedString = scripLast.split("_");
             lastUpdateDate = delimitedString[3];//to be fixed
             resultDatas.add(fillResult(recordDataLast, scripId, lastUpdateDate));
-            
+
             List<List<String>> recordLastNext = new ArrayList<>();
             int indexL = prevIndex(recordPrev, recordLast);
             List<List<Double>> recordDataLastNext = new ArrayList<>();
-            
+
             List<Double> row = new ArrayList<>();
             for (int ii = indexL; ii < recordDataLast.size(); ii++) {
                 row.add(0, recordDataLast.get(ii).get(0));
@@ -99,45 +97,140 @@ public class GenerateCallDetails {
                 recordDataLastNext.add(row);
                 row = new ArrayList<>();
             }
-            double lastDataFromPrev = recordDataPrev.get(recordDataPrev.size()-1).get(1);
-            String tally="";
-            
-            tally = fillTally(resultDatas.get(resultDatas.size()-2).getLastCallVersionOne(),recordDataLastNext,lastDataFromPrev);
-            resultDatas.get(resultDatas.size()-2).setTallyVersionOne(tally);
-            tally="";
-            tally = fillTally(resultDatas.get(resultDatas.size()-2).getLastCallVersionTwo(),recordDataLastNext,lastDataFromPrev);
-            resultDatas.get(resultDatas.size()-2).setTallyVersionTwo(tally);
-            
-//            System.out.println("Done");
-        }
-        
-        List<String> rowToAdd = new ArrayList<>();
-        for (int ii = 0; ii < resultDatas.size(); ii++) {
-            rowToAdd.add(0, resultDatas.get(ii).getScripID());
-            rowToAdd.add(1, resultDatas.get(ii).getLastUpdateTime());
-            rowToAdd.add(2, resultDatas.get(ii).getPrice().toString());
-            rowToAdd.add(3, resultDatas.get(ii).getLastCallVersionOne());
-            rowToAdd.add(4, resultDatas.get(ii).getLastCallVersionTwo());
-            rowToAdd.add(5, resultDatas.get(ii).getTallyVersionOne());
-            rowToAdd.add(6, resultDatas.get(ii).getTallyVersionTwo());
-            rowToAdd.add(7, resultDatas.get(ii).getRetraceVersionOne().toString());
-            rowToAdd.add(8, resultDatas.get(ii).getRetraceVersionTwo().toString());
-            rowToAdd.add(9, resultDatas.get(ii).getPriceBrokerageGstOne().toString());
-            rowToAdd.add(10, resultDatas.get(ii).getPriceBrokerageGstTwo().toString());
+            double lastDataFromPrev = recordDataPrev.get(recordDataPrev.size() - 1).get(1);
+            String tally = "";
+
+            tally = fillTally(resultDatas.get(resultDatas.size() - 2).getLastCallVersionOne(), recordDataLastNext, lastDataFromPrev);
+            resultDatas.get(resultDatas.size() - 2).setTallyVersionOne(tally);
+            tally = "";
+            tally = fillTally(resultDatas.get(resultDatas.size() - 2).getLastCallVersionTwo(), recordDataLastNext, lastDataFromPrev);
+            resultDatas.get(resultDatas.size() - 2).setTallyVersionTwo(tally);
+/////////// Update existing call list 
+            List<String> rowToAdd = new ArrayList<>();
+            rowToAdd = updateCallsFile(resultDatas.get(resultDatas.size() - 1)); //latest call record
             recordCallUpdated.add(rowToAdd);
+            
             rowToAdd = new ArrayList<>();
+            rowToAdd = updateCallsFile(resultDatas.get(resultDatas.size() - 2)); //previous day's call record
+            recordCallUpdated.add(rowToAdd);
+/////////// Update existing call list             
+//            System.out.println("Done");
+//            call list ends here
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+            recordPriceUpdated = recordCallUpdated;
+
+            double buyAccumulated = 0.0;
+            int buyCount = 0;
+            if (resultDatas.get(1).getLastCallVersionOne().equals("sell")) {
+                for (int ii = recordPriceUpdated.size() - 2; ii > 0; ii--) {
+                    if (recordPriceUpdated.get(ii).get(0).equals(listFileArray.get(i))) {
+                        if (recordPriceUpdated.get(ii).get(3).equals("buy")) {
+                            buyCount = buyCount + 1;
+                            buyAccumulated = buyAccumulated
+                                    + Double.parseDouble(recordPriceUpdated.get(ii).get(9));
+                        }
+                        if (recordPriceUpdated.get(ii).get(3).equals("sell")) {
+                            if (buyCount > 0) {
+//                        selling price should be more than last buy price+0.5% commision+GST
+                                if ((buyAccumulated / buyCount) > resultDatas.get(1).getPrice()) {
+                                    resultDatas.get(1).setLastCallOneUpdated("no-sell");
+                                    resultDatas.get(1).setTallyOneUpdated("");
+                                }
+                            }
+                            break;
+                        }
+                        if (ii == 1 && !recordPriceUpdated.get(ii).get(3).equals("sell")
+                                && buyCount > 0) {
+                            if ((buyAccumulated / buyCount) > resultDatas.get(1).getPrice()) {
+                                resultDatas.get(1).setLastCallOneUpdated("no-sell");
+                                resultDatas.get(1).setTallyOneUpdated("");
+                            }
+                        }
+                    }
+                }
+            }
+   /////////////////////////////////////////////////////////////////////////////////////////////////////         
+            buyAccumulated = 0.0;
+            buyCount = 0;
+            if (resultDatas.get(1).getLastCallVersionTwo().equals("sell")) {
+                for (int ii = recordPriceUpdated.size() - 2; ii > 0; ii--) {
+                    if (recordPriceUpdated.get(ii).get(0).equals(listFileArray.get(i))) {
+                        if (recordPriceUpdated.get(ii).get(3).equals("buy")) {
+                            buyCount = buyCount + 1;
+                            buyAccumulated = buyAccumulated
+                                    + Double.parseDouble(recordPriceUpdated.get(ii).get(10));
+                        }
+                        if (recordPriceUpdated.get(ii).get(3).equals("sell")) {
+                            if (buyCount > 0) {
+//                        selling price should be more than last buy price+0.5% commision+GST
+                                if ((buyAccumulated / buyCount) > resultDatas.get(1).getPrice()) {
+                                    resultDatas.get(1).setLastCallOneUpdated("no-sell");
+                                    resultDatas.get(1).setTallyVersionOne("");
+                                }
+                            }
+                            break;
+                        }
+                        if (ii == 1 && !recordPriceUpdated.get(ii).get(3).equals("sell")
+                                && buyCount > 0) {
+                            if ((buyAccumulated / buyCount) > resultDatas.get(1).getPrice()) {
+                                resultDatas.get(1).setLastCallOneUpdated("no-sell");
+                                resultDatas.get(1).setTallyVersionOne("");
+                            }
+                        }
+                    }
+                }
+            }
+ /////////////////////////////////////////////////////////////////////////////////////////////////////           
+
         }
+
+//        List<String> rowToAdd = new ArrayList<>();
+//        for (int ii = 0; ii < resultDatas.size(); ii++) {
+//            rowToAdd.add(0, resultDatas.get(ii).getScripID());
+//            rowToAdd.add(1, resultDatas.get(ii).getLastUpdateTime());
+//            rowToAdd.add(2, resultDatas.get(ii).getPrice().toString());
+//            rowToAdd.add(3, resultDatas.get(ii).getLastCallVersionOne());
+//            rowToAdd.add(4, resultDatas.get(ii).getLastCallVersionTwo());
+//            rowToAdd.add(5, resultDatas.get(ii).getTallyVersionOne());
+//            rowToAdd.add(6, resultDatas.get(ii).getTallyVersionTwo());
+//            rowToAdd.add(7, resultDatas.get(ii).getRetraceVersionOne().toString());
+//            rowToAdd.add(8, resultDatas.get(ii).getRetraceVersionTwo().toString());
+//            rowToAdd.add(9, resultDatas.get(ii).getPriceBrokerageGstOne().toString());
+//            rowToAdd.add(10, resultDatas.get(ii).getPriceBrokerageGstTwo().toString());
+//            recordCallUpdated.add(rowToAdd);
+//            rowToAdd = new ArrayList<>();
+//        }
         
+        
+
 //        ////////////////////////////////////////////////////////////////////////
 //        int indexL = prevIndex(recordPrev, recordLast);
 //        System.out.println("indexL:" +  Integer.toString(indexL));
 //        https://www.geeksforgeeks.org/arraylist-sublist-method-in-java-with-examples/
 //        String printFile = "/home/sb/Documents/java_testing/calls10thmayjava.csv";
-        String printFile = "/home/sb/Documents/java_testing/calls10thmayjava.csv";
+        String printFile = "/home/sb/Documents/java_testing/calls11thmayjava.csv";
         PrintMatrix printMatrix = new PrintMatrix();
         printMatrix.saveListData(recordCallUpdated, printFile);
         System.out.println("Done");
         ////////////////////////////////////////////////////////////////////////
+
+    }
+    
+    private List<String> updateCallsFile(ResultData dataToAdd) {
+        List<String> rowToAdd = new ArrayList<>();
+        rowToAdd.add(0, dataToAdd.getScripID());
+        rowToAdd.add(1, dataToAdd.getLastUpdateTime());
+        rowToAdd.add(2, dataToAdd.getPrice().toString());
+        rowToAdd.add(3, dataToAdd.getLastCallVersionOne());
+        rowToAdd.add(4, dataToAdd.getLastCallVersionTwo());
+        rowToAdd.add(5, dataToAdd.getTallyVersionOne());
+        rowToAdd.add(6, dataToAdd.getTallyVersionTwo());
+        rowToAdd.add(7, dataToAdd.getRetraceVersionOne().toString());
+        rowToAdd.add(8, dataToAdd.getRetraceVersionTwo().toString());
+        rowToAdd.add(9, dataToAdd.getPriceBrokerageGstOne().toString());
+        rowToAdd.add(10, dataToAdd.getPriceBrokerageGstTwo().toString());
+        
+        return rowToAdd;
     }
     
     private String fillTally(String resultTallyData, List<List<Double>> dataNext, Double lastData) {
@@ -236,6 +329,10 @@ public class GenerateCallDetails {
         eachResultData.setTallyVersionTwo("");
         eachResultData.setRetraceVersionOne(smoothData.get(2).getRetraceOne());
         eachResultData.setRetraceVersionTwo(smoothData.get(2).getRetraceTwo());
+        eachResultData.setLastCallOneUpdated("");
+        eachResultData.setLastCallTwoUpdated("");
+        eachResultData.setTallyOneUpdated("");
+        eachResultData.setTallyTwoUpdated("");
 
         if (smoothData.get(2).getCallArrayOne().equals("buy")) {
             eachResultData.setPriceBrokerageGstOne(recordData.get(recordData.size() - 1).get(1) + thresHold);

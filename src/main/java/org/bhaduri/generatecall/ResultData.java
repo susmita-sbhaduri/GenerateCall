@@ -22,6 +22,10 @@ public class ResultData {
     private Double retraceVersionTwo;   
     private Double priceBrokerageGstOne;
     private Double priceBrokerageGstTwo;
+    private String lastCallOneUpdated;
+    private String lastCallTwoUpdated;
+    private String tallyOneUpdated;
+    private String tallyTwoUpdated;
 
     public String getScripID() {
         return scripID;
@@ -109,6 +113,38 @@ public class ResultData {
 
     public void setTallyVersionTwo(String tallyVersionTwo) {
         this.tallyVersionTwo = tallyVersionTwo;
+    }
+
+    public String getLastCallOneUpdated() {
+        return lastCallOneUpdated;
+    }
+
+    public void setLastCallOneUpdated(String lastCallOneUpdated) {
+        this.lastCallOneUpdated = lastCallOneUpdated;
+    }
+
+    public String getLastCallTwoUpdated() {
+        return lastCallTwoUpdated;
+    }
+
+    public void setLastCallTwoUpdated(String lastCallTwoUpdated) {
+        this.lastCallTwoUpdated = lastCallTwoUpdated;
+    }
+
+    public String getTallyOneUpdated() {
+        return tallyOneUpdated;
+    }
+
+    public void setTallyOneUpdated(String tallyOneUpdated) {
+        this.tallyOneUpdated = tallyOneUpdated;
+    }
+
+    public String getTallyTwoUpdated() {
+        return tallyTwoUpdated;
+    }
+
+    public void setTallyTwoUpdated(String tallyTwoUpdated) {
+        this.tallyTwoUpdated = tallyTwoUpdated;
     }
 
     
