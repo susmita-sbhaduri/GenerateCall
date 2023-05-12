@@ -121,7 +121,7 @@ public class GenerateCallDetails {
 
             double buyAccumulated = 0.0;
             int buyCount = 0;
-            if (resultDatas.get(1).getLastCallVersionOne().equals("sell")) {
+            if (resultDatas.get(resultDatas.size()-1).getLastCallVersionOne().equals("sell")) {
                 for (int ii = recordPriceUpdated.size() - 2; ii > 0; ii--) {
                     if (recordPriceUpdated.get(ii).get(0).equals(listFileArray.get(i))) {
                         if (recordPriceUpdated.get(ii).get(3).equals("buy")) {
@@ -152,7 +152,7 @@ public class GenerateCallDetails {
    /////////////////////////////////////////////////////////////////////////////////////////////////////         
             buyAccumulated = 0.0;
             buyCount = 0;
-            if (resultDatas.get(1).getLastCallVersionTwo().equals("sell")) {
+            if (resultDatas.get(resultDatas.size()-1).getLastCallVersionTwo().equals("sell")) {
                 for (int ii = recordPriceUpdated.size() - 2; ii > 0; ii--) {
                     if (recordPriceUpdated.get(ii).get(0).equals(listFileArray.get(i))) {
                         if (recordPriceUpdated.get(ii).get(3).equals("buy")) {
