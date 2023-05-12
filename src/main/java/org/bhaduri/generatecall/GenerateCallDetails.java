@@ -107,11 +107,11 @@ public class GenerateCallDetails {
             resultDatas.get(resultDatas.size() - 2).setTallyVersionTwo(tally);
 /////////// Update existing call list 
             List<String> rowToAdd = new ArrayList<>();
-            rowToAdd = updateCallsFile(resultDatas.get(resultDatas.size() - 1)); //latest call record
+            rowToAdd = updateCallsFile(resultDatas.get(resultDatas.size() - 2)); //previous day's call record 
             recordCallUpdated.add(rowToAdd);
             
             rowToAdd = new ArrayList<>();
-            rowToAdd = updateCallsFile(resultDatas.get(resultDatas.size() - 2)); //previous day's call record
+            rowToAdd = updateCallsFile(resultDatas.get(resultDatas.size() - 1)); //latest call record
             recordCallUpdated.add(rowToAdd);
 /////////// Update existing call list             
 //            System.out.println("Done");
