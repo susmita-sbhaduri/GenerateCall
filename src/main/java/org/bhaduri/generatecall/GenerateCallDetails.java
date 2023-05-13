@@ -155,12 +155,12 @@ public class GenerateCallDetails {
             if (resultDatas.get(resultDatas.size()-1).getLastCallVersionTwo().equals("sell")) {
                 for (int ii = recordPriceUpdated.size() - 2; ii > 0; ii--) {
                     if (recordPriceUpdated.get(ii).get(0).equals(listFileArray.get(i))) {
-                        if (recordPriceUpdated.get(ii).get(3).equals("buy")) {
+                        if (recordPriceUpdated.get(ii).get(4).equals("buy")) {
                             buyCount = buyCount + 1;
                             buyAccumulated = buyAccumulated
                                     + Double.parseDouble(recordPriceUpdated.get(ii).get(10));
                         }
-                        if (recordPriceUpdated.get(ii).get(3).equals("sell")) {
+                        if (recordPriceUpdated.get(ii).get(4).equals("sell")) {
                             if (buyCount > 0) {
 //                        selling price should be more than last buy price+0.5% commision+GST
                                 if ((buyAccumulated / buyCount) > resultDatas.get(1).getPrice()) {
@@ -170,7 +170,7 @@ public class GenerateCallDetails {
                             }
                             break;
                         }
-                        if (ii == 1 && !recordPriceUpdated.get(ii).get(3).equals("sell")
+                        if (ii == 1 && !recordPriceUpdated.get(ii).get(4).equals("sell")
                                 && buyCount > 0) {
                             if ((buyAccumulated / buyCount) > resultDatas.get(1).getPrice()) {
                                 resultDatas.get(1).setLastCallOneUpdated("no-sell");
