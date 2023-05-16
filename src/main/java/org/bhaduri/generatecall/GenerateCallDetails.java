@@ -17,6 +17,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 public class GenerateCallDetails {
 
@@ -51,7 +52,22 @@ public class GenerateCallDetails {
             }
         }
         recordPrice = readCSV(priceDataPath);
-
+        List<List<String>> pricePerScrip;
+        List<List<String>> priceHeading = new ArrayList<>();
+        List<String> innerList = new ArrayList<>();
+        
+        innerList.add("EQ");
+        innerList.add("Date");
+        innerList.add("Price");
+        innerList.add("CallOne");
+        innerList.add("CallTwo");
+        innerList.add("TallyOne");
+        innerList.add("TallyTwo");
+        innerList.add("RetraceOne");
+        innerList.add("RetraceTwo");
+        innerList.add("PriceGSTOne");
+        innerList.add("PriceGSTTwo");
+        priceHeading.add(innerList);
         ////////for extracting lastupdate date
         String scripFolderPath = "";
         List<ResultData> resultDatas = new ArrayList<ResultData>();
@@ -67,6 +83,13 @@ public class GenerateCallDetails {
             String scripLast = arrayPerScrip[fileCount - 1].getAbsolutePath();
             
             System.out.println("scripid"+listFileArray.get(i));
+            pricePerScrip = new ArrayList<>();
+            for (int ii = 0; ii < recordPrice.size(); ii++) {
+                if (recordPrice.get(ii).get(0).equals(listFileArray.get(i))) {
+                    pricePerScrip.add(recordPrice.get(ii));
+                }
+            }
+//            priceHeading.addAll(pricePerScrip);
 //            System.out.println("Previous file:" + scripPrev);
 //            System.out.println("Previous file:" + scripLast);
             List<List<String>> recordPrev = new ArrayList<>();
@@ -113,19 +136,25 @@ public class GenerateCallDetails {
             rowToAdd = updateCallsFile(resultDatas.get(resultDatas.size() - 2)); //previous day's call record 
             recordCallUpdated.add(rowToAdd);
             
-            recordPrice.set(recordPrice.size()-1, rowToAdd);
-            if(recordPrice.get(recordPrice.size()-1).get(3).equals("no-sell")){
-                recordPrice.get(recordPrice.size()-1).set(5,"");
+            String noSellCallOne = pricePerScrip.get(pricePerScrip.size()-1).get(3);
+            String noSellCallTwo = pricePerScrip.get(pricePerScrip.size()-1).get(4);
+            pricePerScrip.set(pricePerScrip.size()-1, rowToAdd);
+            
+            if(noSellCallOne.equals("no-sell")){
+                pricePerScrip.get(pricePerScrip.size()-1).set(3,"no-sell");
+                pricePerScrip.get(pricePerScrip.size()-1).set(5,"");
             }
-            if(recordPrice.get(recordPrice.size()-1).get(4).equals("no-sell")){
-                recordPrice.get(recordPrice.size()-1).set(6,"");
+//            noSellCall = recordPrice.get(recordPrice.size()-1).get(4);
+            if(noSellCallTwo.equals("no-sell")){
+                pricePerScrip.get(pricePerScrip.size()-1).set(4,"no-sell");
+                pricePerScrip.get(pricePerScrip.size()-1).set(6,"");
             }
             
             rowToAdd = new ArrayList<>();
             rowToAdd = updateCallsFile(resultDatas.get(resultDatas.size() - 1)); //latest call record
             recordCallUpdated.add(rowToAdd);
             
-            recordPrice.add(rowToAdd);
+            pricePerScrip.add(rowToAdd);
 /////////// Update existing call list             
 //            System.out.println("Done");
 //            call list ends here
@@ -135,14 +164,14 @@ public class GenerateCallDetails {
             double buyAccumulated = 0.0;
             int buyCount = 0;
             if (resultDatas.get(resultDatas.size()-1).getLastCallVersionOne().equals("sell")) {
-                for (int ii = recordPrice.size() - 2; ii > 0; ii--) {
-                    if (recordPrice.get(ii).get(0).equals(listFileArray.get(i))) {
-                        if (recordPrice.get(ii).get(3).equals("buy")) {
+                for (int ii = pricePerScrip.size() - 2; ii > 0; ii--) {
+                    if (pricePerScrip.get(ii).get(0).equals(listFileArray.get(i))) {
+                        if (pricePerScrip.get(ii).get(3).equals("buy")) {
                             buyCount = buyCount + 1;
                             buyAccumulated = buyAccumulated
-                                    + Double.parseDouble(recordPrice.get(ii).get(9));
+                                    + Double.parseDouble(pricePerScrip.get(ii).get(9));
                         }
-                        if (recordPrice.get(ii).get(3).equals("sell")) {
+                        if (pricePerScrip.get(ii).get(3).equals("sell")) {
                             if (buyCount > 0) {
 //                        selling price should be more than last buy price+0.5% commision+GST
                                 if ((buyAccumulated / buyCount) > resultDatas.get(resultDatas.size()-1).getPrice()) {
@@ -152,7 +181,7 @@ public class GenerateCallDetails {
                             }
                             break;
                         }
-                        if (ii == 1 && !recordPrice.get(ii).get(3).equals("sell")
+                        if (ii == 1 && !pricePerScrip.get(ii).get(3).equals("sell")
                                 && buyCount > 0) {
                             if ((buyAccumulated / buyCount) > resultDatas.get(resultDatas.size()-1).getPrice()) {
                                 resultDatas.get(1).setLastCallOneUpdated("no-sell");
@@ -166,14 +195,14 @@ public class GenerateCallDetails {
             buyAccumulated = 0.0;
             buyCount = 0;
             if (resultDatas.get(resultDatas.size()-1).getLastCallVersionTwo().equals("sell")) {
-                for (int ii = recordPrice.size() - 2; ii > 0; ii--) {
-                    if (recordPrice.get(ii).get(0).equals(listFileArray.get(i))) {
-                        if (recordPrice.get(ii).get(4).equals("buy")) {
+                for (int ii = pricePerScrip.size() - 2; ii > 0; ii--) {
+                    if (pricePerScrip.get(ii).get(0).equals(listFileArray.get(i))) {
+                        if (pricePerScrip.get(ii).get(4).equals("buy")) {
                             buyCount = buyCount + 1;
                             buyAccumulated = buyAccumulated
-                                    + Double.parseDouble(recordPrice.get(ii).get(10));
+                                    + Double.parseDouble(pricePerScrip.get(ii).get(10));
                         }
-                        if (recordPrice.get(ii).get(4).equals("sell")) {
+                        if (pricePerScrip.get(ii).get(4).equals("sell")) {
                             if (buyCount > 0) {
 //                        selling price should be more than last buy price+0.5% commision+GST
                                 if ((buyAccumulated / buyCount) > resultDatas.get(resultDatas.size()-1).getPrice()) {
@@ -183,7 +212,7 @@ public class GenerateCallDetails {
                             }
                             break;
                         }
-                        if (ii == 1 && !recordPrice.get(ii).get(4).equals("sell")
+                        if (ii == 1 && !pricePerScrip.get(ii).get(4).equals("sell")
                                 && buyCount > 0) {
                             if ((buyAccumulated / buyCount) > resultDatas.get(resultDatas.size()-1).getPrice()) {
                                 resultDatas.get(1).setLastCallOneUpdated("no-sell");
@@ -236,14 +265,7 @@ public class GenerateCallDetails {
         rowToAdd.add(2, dataToAdd.getPrice().toString());
         rowToAdd.add(3, dataToAdd.getLastCallVersionOne());
         rowToAdd.add(4, dataToAdd.getLastCallVersionTwo());
-        if(dataToAdd.getLastCallVersionOne().equals("no-sell")){
-            rowToAdd.add(5, "");
-        }
         rowToAdd.add(5, dataToAdd.getTallyVersionOne());
-        
-        if(dataToAdd.getLastCallVersionTwo().equals("no-sell")){
-            rowToAdd.add(6, "");
-        }
         rowToAdd.add(6, dataToAdd.getTallyVersionTwo());
         rowToAdd.add(7, dataToAdd.getRetraceVersionOne().toString());
         rowToAdd.add(8, dataToAdd.getRetraceVersionTwo().toString());
