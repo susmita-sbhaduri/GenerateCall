@@ -67,6 +67,22 @@ public class ResultData {
         this.lastCallVersionTwo = lastCallVersionTwo;
     }
 
+    public String getTallyVersionOne() {
+        return tallyVersionOne;
+    }
+
+    public void setTallyVersionOne(String tallyVersionOne) {
+        this.tallyVersionOne = tallyVersionOne;
+    }
+
+    public String getTallyVersionTwo() {
+        return tallyVersionTwo;
+    }
+
+    public void setTallyVersionTwo(String tallyVersionTwo) {
+        this.tallyVersionTwo = tallyVersionTwo;
+    }
+
     public Double getRetraceVersionOne() {
         return retraceVersionOne;
     }
@@ -97,22 +113,6 @@ public class ResultData {
 
     public void setPriceBrokerageGstTwo(Double priceBrokerageGstTwo) {
         this.priceBrokerageGstTwo = priceBrokerageGstTwo;
-    }
-
-    public String getTallyVersionOne() {
-        return tallyVersionOne;
-    }
-
-    public void setTallyVersionOne(String tallyVersionOne) {
-        this.tallyVersionOne = tallyVersionOne;
-    }
-
-    public String getTallyVersionTwo() {
-        return tallyVersionTwo;
-    }
-
-    public void setTallyVersionTwo(String tallyVersionTwo) {
-        this.tallyVersionTwo = tallyVersionTwo;
     }
 
     public String getLastCallOneUpdated() {
@@ -147,5 +147,6 @@ public class ResultData {
         this.tallyTwoUpdated = tallyTwoUpdated;
     }
 
+   
     
 }

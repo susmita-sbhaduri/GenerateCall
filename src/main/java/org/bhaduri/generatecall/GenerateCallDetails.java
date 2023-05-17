@@ -53,9 +53,10 @@ public class GenerateCallDetails {
         }
         recordPrice = readCSV(priceDataPath);
         List<List<String>> pricePerScrip;
+        List<List<String>> printUpdatedList = new ArrayList<>();
         List<List<String>> priceHeading = new ArrayList<>();
         List<String> innerList = new ArrayList<>();
-        
+
         innerList.add("EQ");
         innerList.add("Date");
         innerList.add("Price");
@@ -81,8 +82,8 @@ public class GenerateCallDetails {
 
             String scripPrev = arrayPerScrip[fileCount - 2].getAbsolutePath();
             String scripLast = arrayPerScrip[fileCount - 1].getAbsolutePath();
-            
-            System.out.println("scripid"+listFileArray.get(i));
+
+            System.out.println("scripid" + listFileArray.get(i));
             pricePerScrip = new ArrayList<>();
             for (int ii = 0; ii < recordPrice.size(); ii++) {
                 if (recordPrice.get(ii).get(0).equals(listFileArray.get(i))) {
@@ -132,98 +133,138 @@ public class GenerateCallDetails {
             tally = fillTally(resultDatas.get(resultDatas.size() - 2).getLastCallVersionTwo(), recordDataLastNext, lastDataFromPrev);
             resultDatas.get(resultDatas.size() - 2).setTallyVersionTwo(tally);
 /////////// Update existing call list 
-            List<String> rowToAdd = new ArrayList<>();
-            rowToAdd = updateCallsFile(resultDatas.get(resultDatas.size() - 2)); //previous day's call record 
-            recordCallUpdated.add(rowToAdd);
+            List<String> callToAdd = updateCallsFile(resultDatas.get(resultDatas.size() - 2)); //previous day's call record 
+            recordCallUpdated.add(callToAdd);
+/////////// Update existing call list
+///////////Update price list
+//            List<String> priceCallToAdd = new ArrayList<>();
+//            priceCallToAdd=callToAdd;
+            String noSellCallOne = pricePerScrip.get(pricePerScrip.size() - 1).get(3);
+            String noSellCallTwo = pricePerScrip.get(pricePerScrip.size() - 1).get(4);
+//            pricePerScrip.set(pricePerScrip.size() - 1, priceCallToAdd);
+
+//            pricePerScrip.get(pricePerScrip.size() - 1).set(0, callToAdd.get(0));
+//            pricePerScrip.get(pricePerScrip.size() - 1).set(1, callToAdd.get(1));
+//            pricePerScrip.get(pricePerScrip.size() - 1).set(2, callToAdd.get(2));
+//            pricePerScrip.get(pricePerScrip.size() - 1).set(3, callToAdd.get(3));
+//            pricePerScrip.get(pricePerScrip.size() - 1).set(4, callToAdd.get(4));
+//            pricePerScrip.get(pricePerScrip.size() - 1).set(5, callToAdd.get(5));
+//            pricePerScrip.get(pricePerScrip.size() - 1).set(6, callToAdd.get(6));
+//            pricePerScrip.get(pricePerScrip.size() - 1).set(7, callToAdd.get(7));
+//            pricePerScrip.get(pricePerScrip.size() - 1).set(8, callToAdd.get(8));
+//            pricePerScrip.get(pricePerScrip.size() - 1).set(9, callToAdd.get(9));
+//            pricePerScrip.get(pricePerScrip.size() - 1).set(10, callToAdd.get(10));
             
-            String noSellCallOne = pricePerScrip.get(pricePerScrip.size()-1).get(3);
-            String noSellCallTwo = pricePerScrip.get(pricePerScrip.size()-1).get(4);
-            pricePerScrip.set(pricePerScrip.size()-1, rowToAdd);
-            
-            if(noSellCallOne.equals("no-sell")){
-                pricePerScrip.get(pricePerScrip.size()-1).set(3,"no-sell");
-                pricePerScrip.get(pricePerScrip.size()-1).set(5,"");
+
+            if (noSellCallOne.equals("no-sell")) {
+                pricePerScrip.get(pricePerScrip.size() - 1).set(3, "no-sell");
+                pricePerScrip.get(pricePerScrip.size() - 1).set(5, "");
+            }else{
+                pricePerScrip.get(pricePerScrip.size() - 1).set(5, callToAdd.get(5));
             }
-//            noSellCall = recordPrice.get(recordPrice.size()-1).get(4);
-            if(noSellCallTwo.equals("no-sell")){
-                pricePerScrip.get(pricePerScrip.size()-1).set(4,"no-sell");
-                pricePerScrip.get(pricePerScrip.size()-1).set(6,"");
+            if (noSellCallTwo.equals("no-sell")) {
+                pricePerScrip.get(pricePerScrip.size() - 1).set(4, "no-sell");
+                pricePerScrip.get(pricePerScrip.size() - 1).set(6, "");
+            }else{
+                pricePerScrip.get(pricePerScrip.size() - 1).set(6, callToAdd.get(6));
             }
+///////////Update price list
+/////////// Update existing call list
+//            callToAdd = new ArrayList<>();
+            callToAdd = updateCallsFile(resultDatas.get(resultDatas.size() - 1)); //latest call record
+            recordCallUpdated.add(callToAdd);
+/////////// Update existing call list
+///////////Update price list
+            List<String> priceCallToAdd = new ArrayList<>();
             
-            rowToAdd = new ArrayList<>();
-            rowToAdd = updateCallsFile(resultDatas.get(resultDatas.size() - 1)); //latest call record
-            recordCallUpdated.add(rowToAdd);
-            
-            pricePerScrip.add(rowToAdd);
-/////////// Update existing call list             
-//            System.out.println("Done");
-//            call list ends here
+            priceCallToAdd.add(0, callToAdd.get(0));
+            priceCallToAdd.add(1, callToAdd.get(1));
+            priceCallToAdd.add(2, callToAdd.get(2));
+            priceCallToAdd.add(3, callToAdd.get(3));
+            priceCallToAdd.add(4, callToAdd.get(4));
+            priceCallToAdd.add(5, callToAdd.get(5));
+            priceCallToAdd.add(6, callToAdd.get(6));
+            priceCallToAdd.add(7, callToAdd.get(7));
+            priceCallToAdd.add(8, callToAdd.get(8));
+            priceCallToAdd.add(9, callToAdd.get(9));
+            priceCallToAdd.add(10, callToAdd.get(10));
+            pricePerScrip.add(priceCallToAdd);
+ ///////////Update price list
+//          call list ends here
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-//            recordPriceUpdated = recordCallUpdated;
 
             double buyAccumulated = 0.0;
             int buyCount = 0;
-            if (resultDatas.get(resultDatas.size()-1).getLastCallVersionOne().equals("sell")) {
+            if (resultDatas.get(resultDatas.size() - 1).getLastCallVersionOne().equals("sell")) {
                 for (int ii = pricePerScrip.size() - 2; ii > 0; ii--) {
-                    if (pricePerScrip.get(ii).get(0).equals(listFileArray.get(i))) {
-                        if (pricePerScrip.get(ii).get(3).equals("buy")) {
-                            buyCount = buyCount + 1;
-                            buyAccumulated = buyAccumulated
-                                    + Double.parseDouble(pricePerScrip.get(ii).get(9));
-                        }
-                        if (pricePerScrip.get(ii).get(3).equals("sell")) {
-                            if (buyCount > 0) {
+//                    if (pricePerScrip.get(ii).get(0).equals(listFileArray.get(i))) {
+                    if (pricePerScrip.get(ii).get(3).equals("buy")) {
+                        buyCount = buyCount + 1;
+                        buyAccumulated = buyAccumulated
+                                + Double.parseDouble(pricePerScrip.get(ii).get(9));
+                    }
+                    if (pricePerScrip.get(ii).get(3).equals("sell")) {
+                        if (buyCount > 0) {
 //                        selling price should be more than last buy price+0.5% commision+GST
-                                if ((buyAccumulated / buyCount) > resultDatas.get(resultDatas.size()-1).getPrice()) {
-                                    resultDatas.get(1).setLastCallOneUpdated("no-sell");
-                                    resultDatas.get(1).setTallyOneUpdated("");
-                                }
+                            if ((buyAccumulated / buyCount) > resultDatas.get(resultDatas.size() - 1).getPrice()) {
+                                resultDatas.get(resultDatas.size() - 1).setLastCallOneUpdated("no-sell");
+                                resultDatas.get(resultDatas.size() - 1).setTallyOneUpdated("");
+                                pricePerScrip.get(pricePerScrip.size() - 1).set(3, "no-sell");
+                                pricePerScrip.get(pricePerScrip.size() - 1).set(5, "");
                             }
-                            break;
                         }
-                        if (ii == 1 && !pricePerScrip.get(ii).get(3).equals("sell")
-                                && buyCount > 0) {
-                            if ((buyAccumulated / buyCount) > resultDatas.get(resultDatas.size()-1).getPrice()) {
-                                resultDatas.get(1).setLastCallOneUpdated("no-sell");
-                                resultDatas.get(1).setTallyOneUpdated("");
-                            }
+                        break;
+                    }
+                    if (ii == 1 && !pricePerScrip.get(ii).get(3).equals("sell")
+                            && buyCount > 0) {
+                        if ((buyAccumulated / buyCount) > resultDatas.get(resultDatas.size() - 1).getPrice()) {
+                            resultDatas.get(resultDatas.size() - 1).setLastCallOneUpdated("no-sell");
+                            resultDatas.get(resultDatas.size() - 1).setTallyOneUpdated("");
+                            pricePerScrip.get(pricePerScrip.size() - 1).set(3, "no-sell");
+                            pricePerScrip.get(pricePerScrip.size() - 1).set(5, "");
                         }
                     }
+//                    }
                 }
             }
-   /////////////////////////////////////////////////////////////////////////////////////////////////////         
+            /////////////////////////////////////////////////////////////////////////////////////////////////////         
             buyAccumulated = 0.0;
             buyCount = 0;
-            if (resultDatas.get(resultDatas.size()-1).getLastCallVersionTwo().equals("sell")) {
+            if (resultDatas.get(resultDatas.size() - 1).getLastCallVersionTwo().equals("sell")) {
                 for (int ii = pricePerScrip.size() - 2; ii > 0; ii--) {
-                    if (pricePerScrip.get(ii).get(0).equals(listFileArray.get(i))) {
-                        if (pricePerScrip.get(ii).get(4).equals("buy")) {
-                            buyCount = buyCount + 1;
-                            buyAccumulated = buyAccumulated
-                                    + Double.parseDouble(pricePerScrip.get(ii).get(10));
-                        }
-                        if (pricePerScrip.get(ii).get(4).equals("sell")) {
-                            if (buyCount > 0) {
+//                    if (pricePerScrip.get(ii).get(0).equals(listFileArray.get(i))) {
+                    if (pricePerScrip.get(ii).get(4).equals("buy")) {
+                        buyCount = buyCount + 1;
+                        buyAccumulated = buyAccumulated
+                                + Double.parseDouble(pricePerScrip.get(ii).get(10));
+                    }
+                    if (pricePerScrip.get(ii).get(4).equals("sell")) {
+                        if (buyCount > 0) {
 //                        selling price should be more than last buy price+0.5% commision+GST
-                                if ((buyAccumulated / buyCount) > resultDatas.get(resultDatas.size()-1).getPrice()) {
-                                    resultDatas.get(1).setLastCallOneUpdated("no-sell");
-                                    resultDatas.get(1).setTallyVersionOne("");
-                                }
+                            if ((buyAccumulated / buyCount) > resultDatas.get(resultDatas.size() - 1).getPrice()) {
+                                resultDatas.get(resultDatas.size() - 1).setLastCallTwoUpdated("no-sell");
+                                resultDatas.get(resultDatas.size() - 1).setTallyVersionTwo("");
+                                pricePerScrip.get(pricePerScrip.size() - 1).set(4, "no-sell");
+                                pricePerScrip.get(pricePerScrip.size() - 1).set(6, "");
                             }
-                            break;
                         }
-                        if (ii == 1 && !pricePerScrip.get(ii).get(4).equals("sell")
-                                && buyCount > 0) {
-                            if ((buyAccumulated / buyCount) > resultDatas.get(resultDatas.size()-1).getPrice()) {
-                                resultDatas.get(1).setLastCallOneUpdated("no-sell");
-                                resultDatas.get(1).setTallyVersionOne("");
-                            }
+                        break;
+                    }
+                    if (ii == 1 && !pricePerScrip.get(ii).get(4).equals("sell")
+                            && buyCount > 0) {
+                        if ((buyAccumulated / buyCount) > resultDatas.get(resultDatas.size() - 1).getPrice()) {
+                            resultDatas.get(resultDatas.size() - 1).setLastCallTwoUpdated("no-sell");
+                            resultDatas.get(resultDatas.size() - 1).setTallyVersionTwo("");
+                            pricePerScrip.get(pricePerScrip.size() - 1).set(4, "no-sell");
+                            pricePerScrip.get(pricePerScrip.size() - 1).set(6, "");
                         }
                     }
+//                    }
                 }
             }
- /////////////////////////////////////////////////////////////////////////////////////////////////////           
-
+            /////////////////////////////////////////////////////////////////////////////////////////////////////           
+            System.out.println("Done in scrip loop");
+            printUpdatedList.addAll(pricePerScrip);
         }
 
 //        List<String> rowToAdd = new ArrayList<>();
@@ -242,22 +283,26 @@ public class GenerateCallDetails {
 //            recordCallUpdated.add(rowToAdd);
 //            rowToAdd = new ArrayList<>();
 //        }
-        
-        
-
 //        ////////////////////////////////////////////////////////////////////////
 //        int indexL = prevIndex(recordPrev, recordLast);
 //        System.out.println("indexL:" +  Integer.toString(indexL));
 //        https://www.geeksforgeeks.org/arraylist-sublist-method-in-java-with-examples/
 //        String printFile = "/home/sb/Documents/java_testing/calls10thmayjava.csv";
-        String printFile = "/home/sb/Documents/java_testing/calls13thmayjava.csv";
+        priceHeading.addAll(printUpdatedList);
+        
+        String printFile = "/home/sb/Documents/java_testing/calls15thmayjava.csv";
         PrintMatrix printMatrix = new PrintMatrix();
         printMatrix.saveListData(recordCallUpdated, printFile);
+        
+        String priceFile = "/home/sb/Documents/java_testing/price15thmayjava.csv";
+        printMatrix = new PrintMatrix();
+        printMatrix.saveListData(priceHeading, priceFile);
+        
         System.out.println("Done");
         ////////////////////////////////////////////////////////////////////////
 
     }
-    
+
     private List<String> updateCallsFile(ResultData dataToAdd) {
         List<String> rowToAdd = new ArrayList<>();
         rowToAdd.add(0, dataToAdd.getScripID());
@@ -271,13 +316,13 @@ public class GenerateCallDetails {
         rowToAdd.add(8, dataToAdd.getRetraceVersionTwo().toString());
         rowToAdd.add(9, dataToAdd.getPriceBrokerageGstOne().toString());
         rowToAdd.add(10, dataToAdd.getPriceBrokerageGstTwo().toString());
-        
+
         return rowToAdd;
     }
-    
+
     private String fillTally(String resultTallyData, List<List<Double>> dataNext, Double lastData) {
         double threshold = (0.5 / 100) * lastData;
-        String tally ="";
+        String tally = "";
         if (resultTallyData.equals("buy")) {
             for (int ii = 0; ii < dataNext.size(); ii++) {
 //                System.out.println(dataNext.get(ii).get(1));
@@ -319,6 +364,7 @@ public class GenerateCallDetails {
         }
         return tally;
     }
+
     private List<List<String>> readCSV(String csvPath) {
         String line;
         List<List<String>> records = new ArrayList<>();
@@ -338,7 +384,7 @@ public class GenerateCallDetails {
 //        System.out.println("recordTest:" + records.get(records.size() - 1).get(1));
         return records;
     }
-    
+
     private List<List<Double>> readCSVData(List<List<String>> csvStringData) {
         List<List<Double>> recordData = new ArrayList<>();
         List<Double> row = new ArrayList<>();
@@ -385,7 +431,7 @@ public class GenerateCallDetails {
                 eachResultData.setPriceBrokerageGstOne(recordData.get(recordData.size() - 1).get(1));
             }
         }
-        
+
         if (smoothData.get(2).getCallArrayTwo().equals("buy")) {
             eachResultData.setPriceBrokerageGstTwo(recordData.get(recordData.size() - 1).get(1) + thresHold);
         } else {
@@ -395,7 +441,7 @@ public class GenerateCallDetails {
                 eachResultData.setPriceBrokerageGstTwo(recordData.get(recordData.size() - 1).get(1));
             }
         }
-        
+
 //        System.out.println("recordTest:" + records.get(records.size() - 1).get(1));
         return eachResultData;
     }
