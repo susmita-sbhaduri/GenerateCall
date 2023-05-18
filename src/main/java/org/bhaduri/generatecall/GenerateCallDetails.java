@@ -17,20 +17,18 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
-import java.util.stream.Collectors;
 
 public class GenerateCallDetails {
 
     public void getFileList() {
         String fullDataPath = "/home/sb/Documents/java_testing/EQ_test/";
         String nifty50Path = "/home/sb/Documents/java_testing/EQ_test_data/";
-        String callDataPath = "/home/sb/Documents/java_testing/call12thmay_matlab.csv";
-        String priceDataPath = "/home/sb/Documents/java_testing/price12thmay_matlab.csv";
+        String callDataPath = "/home/sb/Documents/java_testing/calls17thmay_matlab.csv";
+        String priceDataPath = "/home/sb/Documents/java_testing/price17thmay_matlab.csv";
 
         File directory = new File(nifty50Path);
-//        String[] fileArray = directory.list();
         List listFileArray = Arrays.asList(directory.list());
-        Collections.sort(listFileArray);
+        Collections.sort(listFileArray); //directories are sorted as per their name
         int dirCount = listFileArray.size();
         ////////for extracting lastupdate date
 //        System.out.println("listFileArray[1]:" + fullDataPath.concat(listFileArray.get(0).toString()).concat("/"));
@@ -40,20 +38,23 @@ public class GenerateCallDetails {
         Arrays.sort(arrayFirstScrip, LASTMODIFIED_COMPARATOR);
         String firstScripPrev = arrayFirstScrip[arrayFirstScrip.length - 2].getAbsolutePath();
         String[] delimitedString = firstScripPrev.split("_"); // to be fixed as per the path
+         ////////for extracting lastupdate date from the file of previous day for the first scrip id in EQ_test/
+         ////////folder here its "ADANIENT"        
 
         List<List<String>> recordCalls = new ArrayList<>();
         recordCalls = readCSV(callDataPath);
-        List<List<String>> recordCallUpdated = new ArrayList<>();
-        List<List<String>> recordPrice = new ArrayList<>();
-
+        List<List<String>> recordCallUpdated = new ArrayList<>();//input call list
+        List<List<String>> recordPrice = new ArrayList<>(); //input price validation list
+/****************input call list is read into recordCallUpdated except the last record */
         for (int ii = 0; ii < recordCalls.size(); ii++) {
             if (!recordCalls.get(ii).get(1).equals(delimitedString[3])) {
                 recordCallUpdated.add(recordCalls.get(ii));
             }
         }
+/****************input price list is read into recordPrice  */
         recordPrice = readCSV(priceDataPath);
-        List<List<String>> pricePerScrip;
-        List<List<String>> printUpdatedList = new ArrayList<>();
+        List<List<String>> pricePerScrip; //each record of validated price list
+        List<List<String>> printUpdatedList = new ArrayList<>();//updated validated price list
         List<List<String>> priceHeading = new ArrayList<>();
         List<String> innerList = new ArrayList<>();
 
@@ -69,9 +70,12 @@ public class GenerateCallDetails {
         innerList.add("PriceGSTOne");
         innerList.add("PriceGSTTwo");
         priceHeading.add(innerList);
-        ////////for extracting lastupdate date
+/****************input price list is read into recordPrice  */
+       
         String scripFolderPath = "";
-        List<ResultData> resultDatas = new ArrayList<ResultData>();
+        List<ResultData> resultDatas = new ArrayList<ResultData>(); // call list for the last and 
+//        previous days file using elliot curve algo
+        
         for (int i = 0; i < dirCount; i++) {
             scripFolderPath = fullDataPath.concat(listFileArray.get(i).toString());
             scripFolderPath = scripFolderPath.concat("/");
@@ -84,13 +88,13 @@ public class GenerateCallDetails {
             String scripLast = arrayPerScrip[fileCount - 1].getAbsolutePath();
 
             System.out.println("scripid" + listFileArray.get(i));
+// ***********           price data is extracted for for current scripid 
             pricePerScrip = new ArrayList<>();
             for (int ii = 0; ii < recordPrice.size(); ii++) {
                 if (recordPrice.get(ii).get(0).equals(listFileArray.get(i))) {
                     pricePerScrip.add(recordPrice.get(ii));
                 }
             }
-//            priceHeading.addAll(pricePerScrip);
 //            System.out.println("Previous file:" + scripPrev);
 //            System.out.println("Previous file:" + scripLast);
             List<List<String>> recordPrev = new ArrayList<>();
@@ -132,29 +136,13 @@ public class GenerateCallDetails {
             tally = "";
             tally = fillTally(resultDatas.get(resultDatas.size() - 2).getLastCallVersionTwo(), recordDataLastNext, lastDataFromPrev);
             resultDatas.get(resultDatas.size() - 2).setTallyVersionTwo(tally);
-/////////// Update existing call list 
+/////////// Update existing call list for the previous days call
             List<String> callToAdd = updateCallsFile(resultDatas.get(resultDatas.size() - 2)); //previous day's call record 
             recordCallUpdated.add(callToAdd);
 /////////// Update existing call list
-///////////Update price list
-//            List<String> priceCallToAdd = new ArrayList<>();
-//            priceCallToAdd=callToAdd;
+///////////Update price list for the previous days call
             String noSellCallOne = pricePerScrip.get(pricePerScrip.size() - 1).get(3);
-            String noSellCallTwo = pricePerScrip.get(pricePerScrip.size() - 1).get(4);
-//            pricePerScrip.set(pricePerScrip.size() - 1, priceCallToAdd);
-
-//            pricePerScrip.get(pricePerScrip.size() - 1).set(0, callToAdd.get(0));
-//            pricePerScrip.get(pricePerScrip.size() - 1).set(1, callToAdd.get(1));
-//            pricePerScrip.get(pricePerScrip.size() - 1).set(2, callToAdd.get(2));
-//            pricePerScrip.get(pricePerScrip.size() - 1).set(3, callToAdd.get(3));
-//            pricePerScrip.get(pricePerScrip.size() - 1).set(4, callToAdd.get(4));
-//            pricePerScrip.get(pricePerScrip.size() - 1).set(5, callToAdd.get(5));
-//            pricePerScrip.get(pricePerScrip.size() - 1).set(6, callToAdd.get(6));
-//            pricePerScrip.get(pricePerScrip.size() - 1).set(7, callToAdd.get(7));
-//            pricePerScrip.get(pricePerScrip.size() - 1).set(8, callToAdd.get(8));
-//            pricePerScrip.get(pricePerScrip.size() - 1).set(9, callToAdd.get(9));
-//            pricePerScrip.get(pricePerScrip.size() - 1).set(10, callToAdd.get(10));
-            
+            String noSellCallTwo = pricePerScrip.get(pricePerScrip.size() - 1).get(4);            
 
             if (noSellCallOne.equals("no-sell")) {
                 pricePerScrip.get(pricePerScrip.size() - 1).set(3, "no-sell");
@@ -168,36 +156,25 @@ public class GenerateCallDetails {
             }else{
                 pricePerScrip.get(pricePerScrip.size() - 1).set(6, callToAdd.get(6));
             }
-///////////Update price list
-/////////// Update existing call list
-//            callToAdd = new ArrayList<>();
+///////////Update price list for the previous days call
+/////////// Update existing call list for today's call
             callToAdd = updateCallsFile(resultDatas.get(resultDatas.size() - 1)); //latest call record
             recordCallUpdated.add(callToAdd);
-/////////// Update existing call list
-///////////Update price list
-            List<String> priceCallToAdd = new ArrayList<>();
-            
-            priceCallToAdd.add(0, callToAdd.get(0));
-            priceCallToAdd.add(1, callToAdd.get(1));
-            priceCallToAdd.add(2, callToAdd.get(2));
-            priceCallToAdd.add(3, callToAdd.get(3));
-            priceCallToAdd.add(4, callToAdd.get(4));
-            priceCallToAdd.add(5, callToAdd.get(5));
-            priceCallToAdd.add(6, callToAdd.get(6));
-            priceCallToAdd.add(7, callToAdd.get(7));
-            priceCallToAdd.add(8, callToAdd.get(8));
-            priceCallToAdd.add(9, callToAdd.get(9));
-            priceCallToAdd.add(10, callToAdd.get(10));
+/////////// Update existing call list for today's call
+///////////Update price list for today's call
+            List<String> priceCallToAdd = new ArrayList<>(callToAdd);           
             pricePerScrip.add(priceCallToAdd);
- ///////////Update price list
+ ///////////Update price list for today's call
+ //########################################################################
 //          call list ends here
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+//########################################################################
+/*latest call is taken from  resultDatas and if it's "sell" it's checked from previous buys for each 
+scripid stored in pricePerScrip first for version 1 call next for version 2 call*/
+//########################################################################
             double buyAccumulated = 0.0;
             int buyCount = 0;
             if (resultDatas.get(resultDatas.size() - 1).getLastCallVersionOne().equals("sell")) {
                 for (int ii = pricePerScrip.size() - 2; ii > 0; ii--) {
-//                    if (pricePerScrip.get(ii).get(0).equals(listFileArray.get(i))) {
                     if (pricePerScrip.get(ii).get(3).equals("buy")) {
                         buyCount = buyCount + 1;
                         buyAccumulated = buyAccumulated
@@ -205,7 +182,6 @@ public class GenerateCallDetails {
                     }
                     if (pricePerScrip.get(ii).get(3).equals("sell")) {
                         if (buyCount > 0) {
-//                        selling price should be more than last buy price+0.5% commision+GST
                             if ((buyAccumulated / buyCount) > resultDatas.get(resultDatas.size() - 1).getPrice()) {
                                 resultDatas.get(resultDatas.size() - 1).setLastCallOneUpdated("no-sell");
                                 resultDatas.get(resultDatas.size() - 1).setTallyOneUpdated("");
@@ -224,7 +200,6 @@ public class GenerateCallDetails {
                             pricePerScrip.get(pricePerScrip.size() - 1).set(5, "");
                         }
                     }
-//                    }
                 }
             }
             /////////////////////////////////////////////////////////////////////////////////////////////////////         
@@ -232,7 +207,6 @@ public class GenerateCallDetails {
             buyCount = 0;
             if (resultDatas.get(resultDatas.size() - 1).getLastCallVersionTwo().equals("sell")) {
                 for (int ii = pricePerScrip.size() - 2; ii > 0; ii--) {
-//                    if (pricePerScrip.get(ii).get(0).equals(listFileArray.get(i))) {
                     if (pricePerScrip.get(ii).get(4).equals("buy")) {
                         buyCount = buyCount + 1;
                         buyAccumulated = buyAccumulated
@@ -259,30 +233,16 @@ public class GenerateCallDetails {
                             pricePerScrip.get(pricePerScrip.size() - 1).set(6, "");
                         }
                     }
-//                    }
                 }
             }
-            /////////////////////////////////////////////////////////////////////////////////////////////////////           
+//########################################################################
+/*latest call is taken from  resultDatas and if it's "sell" it's checked from previous buys for each 
+scripid stored in pricePerScrip first for version 1 call next for version 2 call*/
+//########################################################################
             System.out.println("Done in scrip loop");
             printUpdatedList.addAll(pricePerScrip);
         }
 
-//        List<String> rowToAdd = new ArrayList<>();
-//        for (int ii = 0; ii < resultDatas.size(); ii++) {
-//            rowToAdd.add(0, resultDatas.get(ii).getScripID());
-//            rowToAdd.add(1, resultDatas.get(ii).getLastUpdateTime());
-//            rowToAdd.add(2, resultDatas.get(ii).getPrice().toString());
-//            rowToAdd.add(3, resultDatas.get(ii).getLastCallVersionOne());
-//            rowToAdd.add(4, resultDatas.get(ii).getLastCallVersionTwo());
-//            rowToAdd.add(5, resultDatas.get(ii).getTallyVersionOne());
-//            rowToAdd.add(6, resultDatas.get(ii).getTallyVersionTwo());
-//            rowToAdd.add(7, resultDatas.get(ii).getRetraceVersionOne().toString());
-//            rowToAdd.add(8, resultDatas.get(ii).getRetraceVersionTwo().toString());
-//            rowToAdd.add(9, resultDatas.get(ii).getPriceBrokerageGstOne().toString());
-//            rowToAdd.add(10, resultDatas.get(ii).getPriceBrokerageGstTwo().toString());
-//            recordCallUpdated.add(rowToAdd);
-//            rowToAdd = new ArrayList<>();
-//        }
 //        ////////////////////////////////////////////////////////////////////////
 //        int indexL = prevIndex(recordPrev, recordLast);
 //        System.out.println("indexL:" +  Integer.toString(indexL));
@@ -290,11 +250,11 @@ public class GenerateCallDetails {
 //        String printFile = "/home/sb/Documents/java_testing/calls10thmayjava.csv";
         priceHeading.addAll(printUpdatedList);
         
-        String printFile = "/home/sb/Documents/java_testing/calls15thmayjava.csv";
+        String printFile = "/home/sb/Documents/java_testing/calls18thmayjava.csv";
         PrintMatrix printMatrix = new PrintMatrix();
         printMatrix.saveListData(recordCallUpdated, printFile);
         
-        String priceFile = "/home/sb/Documents/java_testing/price15thmayjava.csv";
+        String priceFile = "/home/sb/Documents/java_testing/price18thmayjava.csv";
         printMatrix = new PrintMatrix();
         printMatrix.saveListData(priceHeading, priceFile);
         
