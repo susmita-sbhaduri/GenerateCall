@@ -61,15 +61,15 @@ public class GenerateCallDetails1 {
 
         innerList.setScripID("EQ");
         innerList.setLastUpdateTime("Date");
-        innerList.setPrice("Price".toString());
-        innerList.add("CallOne");
-        innerList.add("CallTwo");
-        innerList.add("TallyOne");
-        innerList.add("TallyTwo");
-        innerList.add("RetraceOne");
-        innerList.add("RetraceTwo");
-        innerList.add("PriceGSTOne");
-        innerList.add("PriceGSTTwo");
+        innerList.setPrice(Double.valueOf("Price"));
+//        innerList.add("CallOne");
+//        innerList.add("CallTwo");
+//        innerList.add("TallyOne");
+//        innerList.add("TallyTwo");
+//        innerList.add("RetraceOne");
+//        innerList.add("RetraceTwo");
+//        innerList.add("PriceGSTOne");
+//        innerList.add("PriceGSTTwo");
         priceHeading.add(innerList);
 /****************input price list is read into recordPrice  */
        
@@ -254,32 +254,15 @@ scripid stored in pricePerScrip first for version 1 call next for version 2 call
         
         String printFile = "/home/sb/Documents/java_testing/calls18thmayjava.csv";
         PrintMatrix printMatrix = new PrintMatrix();
-        printMatrix.saveListData(recordCallUpdated, printFile);
+//        printMatrix.saveListData(recordCallUpdated, printFile);
         
         String priceFile = "/home/sb/Documents/java_testing/price18thmayjava.csv";
         printMatrix = new PrintMatrix();
-        printMatrix.saveListData(priceHeading, priceFile);
+//        printMatrix.saveListData(priceHeading, priceFile);
         
         System.out.println("Done");
         ////////////////////////////////////////////////////////////////////////
 
-    }
-
-    private ResultData updateCallsFile(ResultData dataToAdd) {
-        ResultData rowToAdd = new ResultData();
-        rowToAdd.add(0, dataToAdd.getScripID());
-        rowToAdd.add(1, dataToAdd.getLastUpdateTime());
-        rowToAdd.add(2, dataToAdd.getPrice().toString());
-        rowToAdd.add(3, dataToAdd.getLastCallVersionOne());
-        rowToAdd.add(4, dataToAdd.getLastCallVersionTwo());
-        rowToAdd.add(5, dataToAdd.getTallyVersionOne());
-        rowToAdd.add(6, dataToAdd.getTallyVersionTwo());
-        rowToAdd.add(7, dataToAdd.getRetraceVersionOne().toString());
-        rowToAdd.add(8, dataToAdd.getRetraceVersionTwo().toString());
-        rowToAdd.add(9, dataToAdd.getPriceBrokerageGstOne().toString());
-        rowToAdd.add(10, dataToAdd.getPriceBrokerageGstTwo().toString());
-
-        return rowToAdd;
     }
 
     private String fillTally(String resultTallyData, List<List<Double>> dataNext, Double lastData) {
