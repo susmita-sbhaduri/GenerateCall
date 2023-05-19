@@ -56,12 +56,12 @@ public class GenerateCallDetails1 {
         recordPrice = readCSVCallList(priceDataPath);
         List<RecordCallPrice> pricePerScrip; //each record of validated price list
         List<RecordCallPrice> printUpdatedList = new ArrayList<>();//updated validated price list
-        List<List<String>> priceHeading = new ArrayList<>();
-        List<String> innerList = new ArrayList<>();
+        List<RecordCallPrice> priceHeading = new ArrayList<>();
+        RecordCallPrice innerList = new RecordCallPrice();
 
-        innerList.add("EQ");
-        innerList.add("Date");
-        innerList.add("Price");
+        innerList.setScripID("EQ");
+        innerList.setLastUpdateTime("Date");
+        innerList.setPrice("Price".toString());
         innerList.add("CallOne");
         innerList.add("CallTwo");
         innerList.add("TallyOne");
