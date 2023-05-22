@@ -56,21 +56,7 @@ public class GenerateCallDetails1 {
         recordPrice = readCSVCallList(priceDataPath);
         List<RecordCallPrice> pricePerScrip; //each record of validated price list
         List<RecordCallPrice> printUpdatedList = new ArrayList<>();//updated validated price list
-        List<RecordCallPrice> priceHeading = new ArrayList<>();
-        RecordCallPrice innerList = new RecordCallPrice();
-
-        innerList.setScripID("EQ");
-        innerList.setLastUpdateTime("Date");
-        innerList.setPrice(Double.valueOf("Price"));
-//        innerList.add("CallOne");
-//        innerList.add("CallTwo");
-//        innerList.add("TallyOne");
-//        innerList.add("TallyTwo");
-//        innerList.add("RetraceOne");
-//        innerList.add("RetraceTwo");
-//        innerList.add("PriceGSTOne");
-//        innerList.add("PriceGSTTwo");
-        priceHeading.add(innerList);
+        
 /****************input price list is read into recordPrice  */
        
         String scripFolderPath = "";
@@ -250,15 +236,16 @@ scripid stored in pricePerScrip first for version 1 call next for version 2 call
 //        System.out.println("indexL:" +  Integer.toString(indexL));
 //        https://www.geeksforgeeks.org/arraylist-sublist-method-in-java-with-examples/
 //        String printFile = "/home/sb/Documents/java_testing/calls10thmayjava.csv";
-        priceHeading.addAll(printUpdatedList);
-        
+        String priceHeading = "EQ,Date,Price,CallOne,CallTwo,TallyOne,TallyTwo,RetraceOne,RetraceTwo,"
+                + "PriceGSTOne,PriceGSTTwo";
+                
         String printFile = "/home/sb/Documents/java_testing/calls18thmayjava.csv";
         PrintMatrix printMatrix = new PrintMatrix();
-//        printMatrix.saveListData(recordCallUpdated, printFile);
+//        printMatrix.saveListData(recordCallUpdated, printFile,priceHeading);
         
         String priceFile = "/home/sb/Documents/java_testing/price18thmayjava.csv";
         printMatrix = new PrintMatrix();
-//        printMatrix.saveListData(priceHeading, priceFile);
+//        printMatrix.saveListData(printUpdatedList, priceFile,priceHeading);
         
         System.out.println("Done");
         ////////////////////////////////////////////////////////////////////////
