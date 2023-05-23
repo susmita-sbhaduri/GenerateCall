@@ -23,8 +23,8 @@ public class GenerateCallDetails1 {
     public void getFileList() {
         String fullDataPath = "/home/sb/Documents/java_testing/EQ_test/";
         String nifty50Path = "/home/sb/Documents/java_testing/EQ_test_data/";
-        String callDataPath = "/home/sb/Documents/java_testing/calls17thmay_matlab.csv";
-        String priceDataPath = "/home/sb/Documents/java_testing/price17thmay_matlab.csv";
+        String callDataPath = "/home/sb/Documents/java_testing/calls19thmayjava.csv";
+        String priceDataPath = "/home/sb/Documents/java_testing/price19thmayjava.csv";
 
         File directory = new File(nifty50Path);
         List listFileArray = Arrays.asList(directory.list());
@@ -40,7 +40,7 @@ public class GenerateCallDetails1 {
         String[] delimitedString = firstScripPrev.split("_"); // to be fixed as per the path
          ////////for extracting lastupdate date from the file of previous day for the first scrip id in EQ_test/
          ////////folder here its "ADANIENT"        
-
+        String titleExist;
         List<RecordCallPrice> recordCalls = new ArrayList<>();  
         recordCalls = readCSVCallList(callDataPath);       
         
@@ -239,13 +239,14 @@ scripid stored in pricePerScrip first for version 1 call next for version 2 call
         String priceHeading = "EQ,Date,Price,CallOne,CallTwo,TallyOne,TallyTwo,RetraceOne,RetraceTwo,"
                 + "PriceGSTOne,PriceGSTTwo";
                 
-        String printFile = "/home/sb/Documents/java_testing/calls18thmayjava.csv";
+        String printFile = "/home/sb/Documents/java_testing/calls22thmayjava1.csv";
         PrintMatrix printMatrix = new PrintMatrix();
-//        printMatrix.saveListData(recordCallUpdated, printFile,priceHeading);
+        printMatrix.printResultData(recordCallUpdated, printFile, priceHeading);
         
-        String priceFile = "/home/sb/Documents/java_testing/price18thmayjava.csv";
+        String priceFile = "/home/sb/Documents/java_testing/price22thmayjava1.csv";
         printMatrix = new PrintMatrix();
 //        printMatrix.saveListData(printUpdatedList, priceFile,priceHeading);
+        printMatrix.printResultData(printUpdatedList, priceFile, priceHeading);
         
         System.out.println("Done");
         ////////////////////////////////////////////////////////////////////////
@@ -323,7 +324,7 @@ scripid stored in pricePerScrip first for version 1 call next for version 2 call
         RecordCallPrice record = new RecordCallPrice();
         try {
             BufferedReader brPrev = new BufferedReader(new FileReader(csvPath));
-
+            line = brPrev.readLine();
             while ((line = brPrev.readLine()) != null) {
                 // use comma as separator  
                 String[] fields = line.split(",");
