@@ -23,8 +23,8 @@ public class GenerateCallDetails {
     public void getFileList() {
         String fullDataPath = "/home/sb/Documents/java_testing/EQ_test/";
         String nifty50Path = "/home/sb/Documents/java_testing/EQ_test_data/";
-        String callDataPath = "/home/sb/Documents/java_testing/calls22thmayjava.csv";
-        String priceDataPath = "/home/sb/Documents/java_testing/price22thmayjava.csv";
+        String callDataPath = "/home/sb/Documents/java_testing/calls23thmayjava.csv";
+        String priceDataPath = "/home/sb/Documents/java_testing/price23thmayjava.csv";
 
         File directory = new File(nifty50Path);
         List listFileArray = Arrays.asList(directory.list());
@@ -250,11 +250,11 @@ scripid stored in pricePerScrip first for version 1 call next for version 2 call
 //        String printFile = "/home/sb/Documents/java_testing/calls10thmayjava.csv";
         priceHeading.addAll(printUpdatedList);
         
-        String printFile = "/home/sb/Documents/java_testing/calls23thmayjava.csv";
+        String printFile = "/home/sb/Documents/java_testing/calls24thmayjava.csv";
         PrintMatrix printMatrix = new PrintMatrix();
         printMatrix.saveListData(recordCallUpdated, printFile);
         
-        String priceFile = "/home/sb/Documents/java_testing/price23thmayjava.csv";
+        String priceFile = "/home/sb/Documents/java_testing/price24thmayjava.csv";
         printMatrix = new PrintMatrix();
         printMatrix.saveListData(priceHeading, priceFile);
         

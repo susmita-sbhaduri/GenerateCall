@@ -11,10 +11,10 @@ package org.bhaduri.generatecall;
 public class GenerateCall {
     
     public static void main(String[] args){
-        GenerateCallDetails generateCallDetails = new GenerateCallDetails();
-        generateCallDetails.getFileList();
-//        GenerateCallDetails1 generateCallDetails1 = new GenerateCallDetails1();
-//        generateCallDetails1.getFileList();
+//        GenerateCallDetails generateCallDetails = new GenerateCallDetails();
+//        generateCallDetails.getFileList();
+        GenerateCallDetails1 generateCallDetails1 = new GenerateCallDetails1();
+        generateCallDetails1.getFileList();
 
     }
     
