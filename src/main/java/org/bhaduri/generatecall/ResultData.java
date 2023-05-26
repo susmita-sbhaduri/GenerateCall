@@ -12,6 +12,7 @@ import java.util.List;
  */
 public class ResultData extends RecordCallPrice{
     
+   
     private String lastCallOneUpdated;
     private String lastCallTwoUpdated;
     private String tallyOneUpdated;
@@ -48,5 +49,7 @@ public class ResultData extends RecordCallPrice{
     public void setTallyTwoUpdated(String tallyTwoUpdated) {
         this.tallyTwoUpdated = tallyTwoUpdated;
     }
+
+    
     
 }

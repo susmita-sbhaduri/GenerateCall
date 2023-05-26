@@ -11,13 +11,13 @@ package org.bhaduri.generatecall;
 public class RecordCallPrice {
     private String scripID;
     private String lastUpdateTime;
-    private Double Price; 
+    private Double Price;
     private String lastCallVersionOne;
     private String lastCallVersionTwo;
+    private Double retraceVersionOne;
+    private Double retraceVersionTwo;
     private String tallyVersionOne;
     private String tallyVersionTwo;
-    private Double retraceVersionOne;
-    private Double retraceVersionTwo;   
     private Double priceBrokerageGstOne;
     private Double priceBrokerageGstTwo;
 
@@ -61,22 +61,6 @@ public class RecordCallPrice {
         this.lastCallVersionTwo = lastCallVersionTwo;
     }
 
-    public String getTallyVersionOne() {
-        return tallyVersionOne;
-    }
-
-    public void setTallyVersionOne(String tallyVersionOne) {
-        this.tallyVersionOne = tallyVersionOne;
-    }
-
-    public String getTallyVersionTwo() {
-        return tallyVersionTwo;
-    }
-
-    public void setTallyVersionTwo(String tallyVersionTwo) {
-        this.tallyVersionTwo = tallyVersionTwo;
-    }
-
     public Double getRetraceVersionOne() {
         return retraceVersionOne;
     }
@@ -91,6 +75,22 @@ public class RecordCallPrice {
 
     public void setRetraceVersionTwo(Double retraceVersionTwo) {
         this.retraceVersionTwo = retraceVersionTwo;
+    }
+
+    public String getTallyVersionOne() {
+        return tallyVersionOne;
+    }
+
+    public void setTallyVersionOne(String tallyVersionOne) {
+        this.tallyVersionOne = tallyVersionOne;
+    }
+
+    public String getTallyVersionTwo() {
+        return tallyVersionTwo;
+    }
+
+    public void setTallyVersionTwo(String tallyVersionTwo) {
+        this.tallyVersionTwo = tallyVersionTwo;
     }
 
     public Double getPriceBrokerageGstOne() {
@@ -108,7 +108,7 @@ public class RecordCallPrice {
     public void setPriceBrokerageGstTwo(Double priceBrokerageGstTwo) {
         this.priceBrokerageGstTwo = priceBrokerageGstTwo;
     }
-    
+
     
     
 }
