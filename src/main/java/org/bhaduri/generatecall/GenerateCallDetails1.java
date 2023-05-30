@@ -17,6 +17,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
+import java.util.Comparator;
 
 public class GenerateCallDetails1 {
 
@@ -285,6 +286,7 @@ scripid stored in pricePerScrip first for version 1 call next for version 2 call
                 + "PriceGSTOne,PriceGSTTwo";
 
         String printFile = "/home/sb/Documents/java_testing/calls26java1.csv";
+        List sortedRecordCalls()<> = recordCalls.stream().sorted(Comparator.comparing(keyExtractor))
         PrintMatrix printMatrix = new PrintMatrix();
         printMatrix.printResultData(recordCalls, printFile, priceHeading);
 

@@ -21,18 +21,28 @@ import java.util.Collections;
 
 public class ValidateCallDetails {
 
-    List<RecordCallPrice> callListInput = new ArrayList<>();
+    String latestTickDataPath;  
+    RecordCallPrice latestCallData = new RecordCallPrice();
+    
+    String previousCall;
     CsvTickData recordDataLast = new CsvTickData();
+    List<RecordCallPrice> callListInput = new ArrayList<>();
     int oa;
     int ob;
 
-    public ValidateCallDetails(List<RecordCallPrice> callListInput, CsvTickData recordDataLast) {
-        this.callListInput = callListInput;
-        this.recordDataLast = recordDataLast;
+    public ValidateCallDetails(String latestTickDataPath, RecordCallPrice latestCallData) {
+        
+        this.latestTickDataPath = latestTickDataPath;
+        this.latestCallData=latestCallData;
         processInput();
     }
 
     private void  processInput() {
+        CsvTickData lastCsvTickData = new CsvTickData();
+        lastCsvTickData = readLastTickerData(latestTickDataPath,
+                latestCallData.getLastUpdateTime());
+        String tally = "";
+        
         this.oa = ia + 1;
         this.ob = ib + 1;
     }
@@ -74,6 +84,7 @@ public class ValidateCallDetails {
         }       
         return retCsvTickData;
     }
+    
     private String fillTally(String resultTallyData, List<List<Double>> dataNext, Double lastData) {
         double threshold = (0.5 / 100) * lastData;
         String tally = "";
