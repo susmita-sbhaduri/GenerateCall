@@ -2,23 +2,124 @@
 // * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
 // * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
 // */
-//package org.bhaduri.validatecall;
-//
-///**
-// *
-// * @author sb
-// */
-//import java.io.IOException;
-//import static org.apache.commons.io.comparator.LastModifiedFileComparator.*;
-//import java.io.File;
-//import java.util.Arrays;
-//import java.io.BufferedReader;
-//import java.io.FileReader;
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.Collections;
-//
-//public class ValidateCallDetails {
+package org.bhaduri.validatecall;
+
+/**
+ *
+ * @author sb
+ */
+import org.bhaduri.generatecall.*;
+import java.io.IOException;
+import static org.apache.commons.io.comparator.LastModifiedFileComparator.*;
+import java.io.File;
+import java.util.Arrays;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Collections;
+
+public class ValidateCallDetails {
+
+    List<RecordCallPrice> callListInput = new ArrayList<>();
+    CsvTickData recordDataLast = new CsvTickData();
+    int oa;
+    int ob;
+
+    public ValidateCallDetails(List<RecordCallPrice> callListInput, CsvTickData recordDataLast) {
+        this.callListInput = callListInput;
+        this.recordDataLast = recordDataLast;
+        processInput();
+    }
+
+    private void  processInput() {
+        this.oa = ia + 1;
+        this.ob = ib + 1;
+    }
+
+    public int getOa() {
+        return oa;
+    }
+
+    public int getOb() {
+        return ob;
+    }
+    private CsvTickData readLastTickerData(String filePath, String fromDate) {
+        CsvTickData retCsvTickData = new CsvTickData();
+        String line;
+        double index = 0;
+        double indexLast = 0;
+        List<List<Double>> recordData = new ArrayList<>();
+        List<Double> row = new ArrayList<>();
+        String[] fields = null;
+        try {
+            BufferedReader brPrev = new BufferedReader(new FileReader(filePath));
+            while ((line = brPrev.readLine()) != null) {
+                row = new ArrayList<>();
+                fields = line.split(",");
+                if(fields[1].equals(fromDate)){
+                    indexLast = index;
+                }
+                if(index>indexLast){
+                    row.add(index);
+                    row.add(Double.valueOf(fields[3]));
+                }   
+                recordData.add(row);                
+                index = index+1;
+            }
+            retCsvTickData.setTickData(recordData);             
+        } catch (IOException ex) {
+            ex.printStackTrace();
+//                Logger.getLogger(PerMinuteResposeOfNSE.class.getName()).log(Level.SEVERE, null, ex);
+        }       
+        return retCsvTickData;
+    }
+    private String fillTally(String resultTallyData, List<List<Double>> dataNext, Double lastData) {
+        double threshold = (0.5 / 100) * lastData;
+        String tally = "";
+        if (resultTallyData.equals("buy")) {
+            for (int ii = 0; ii < dataNext.size(); ii++) {
+//                System.out.println(dataNext.get(ii).get(1));
+                if (dataNext.get(ii).get(1) < lastData) {
+                    tally = "success";
+                    break;
+                }
+            }
+            if (tally.equals("")) {
+                for (int ii = 0; ii < dataNext.size(); ii++) {
+                    if (dataNext.get(ii).get(1) < (lastData + threshold)) {
+                        tally = "success";
+                        break;
+                    } else {
+                        tally = "failure";
+                        System.out.println(dataNext.get(ii).get(1));
+                    }
+                }
+            }
+        }
+        if (resultTallyData.equals("sell")) {
+            for (int ii = 0; ii < dataNext.size(); ii++) {
+                if (dataNext.get(ii).get(1) > lastData) {
+                    tally = "success";
+                    break;
+                }
+            }
+            if (tally.equals("")) {
+                for (int ii = 0; ii < dataNext.size(); ii++) {
+                    if (dataNext.get(ii).get(1) > (lastData - threshold)) {
+                        tally = "success";
+                        break;
+                    } else {
+                        tally = "failure";
+                        System.out.println(dataNext.get(ii).get(1));
+                    }
+                }
+            }
+        }
+        return tally;
+    }
+
+}
 //
 //    public void getFileList() {
 //        String fullDataPath = "/home/sb/Documents/java_testing/EQ_test/";

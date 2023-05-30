@@ -107,11 +107,11 @@ public class GenerateCallDetails1 {
 //            recordDataPrev = readCSVData(recordPrev);
 //            resultDatas.add(fillResult(recordDataPrev, scripId, lastUpdateDate));
 
-            List<List<Double>> recordDataLast = new ArrayList<>();
+            CsvTickData recordDataLast = new CsvTickData();
             recordDataLast = readCSVData(scripLast);
-            delimitedString = scripLast.split("_");
-            String lastUpdateDate = delimitedString[3];//to be fixed
-            resultDatas.add(fillResult(recordDataLast, scripId, lastUpdateDate));
+//            delimitedString = scripLast.split("_");
+//            String lastUpdateDate = delimitedString[3];//to be fixed
+            resultDatas.add(fillResult(recordDataLast.getTickData(), scripId, recordDataLast.getDateTime()));
 
 //            List<List<String>> recordLastNext = new ArrayList<>();
 //            int indexL = prevIndex(recordPrev, recordLast);
@@ -284,7 +284,7 @@ scripid stored in pricePerScrip first for version 1 call next for version 2 call
         String priceHeading = "EQ,Date,Price,CallOne,CallTwo,RetraceOne,RetraceTwo,"
                 + "PriceGSTOne,PriceGSTTwo";
 
-        String printFile = "/home/sb/Documents/java_testing/calls26java.csv";
+        String printFile = "/home/sb/Documents/java_testing/calls26java1.csv";
         PrintMatrix printMatrix = new PrintMatrix();
         printMatrix.printResultData(recordCalls, printFile, priceHeading);
 
@@ -298,50 +298,7 @@ scripid stored in pricePerScrip first for version 1 call next for version 2 call
 
     }
 
-    private String fillTally(String resultTallyData, List<List<Double>> dataNext, Double lastData) {
-        double threshold = (0.5 / 100) * lastData;
-        String tally = "";
-        if (resultTallyData.equals("buy")) {
-            for (int ii = 0; ii < dataNext.size(); ii++) {
-//                System.out.println(dataNext.get(ii).get(1));
-                if (dataNext.get(ii).get(1) < lastData) {
-                    tally = "success";
-                    break;
-                }
-            }
-            if (tally.equals("")) {
-                for (int ii = 0; ii < dataNext.size(); ii++) {
-                    if (dataNext.get(ii).get(1) < (lastData + threshold)) {
-                        tally = "success";
-                        break;
-                    } else {
-                        tally = "failure";
-                        System.out.println(dataNext.get(ii).get(1));
-                    }
-                }
-            }
-        }
-        if (resultTallyData.equals("sell")) {
-            for (int ii = 0; ii < dataNext.size(); ii++) {
-                if (dataNext.get(ii).get(1) > lastData) {
-                    tally = "success";
-                    break;
-                }
-            }
-            if (tally.equals("")) {
-                for (int ii = 0; ii < dataNext.size(); ii++) {
-                    if (dataNext.get(ii).get(1) > (lastData - threshold)) {
-                        tally = "success";
-                        break;
-                    } else {
-                        tally = "failure";
-                        System.out.println(dataNext.get(ii).get(1));
-                    }
-                }
-            }
-        }
-        return tally;
-    }
+//    
 
     private List<List<String>> readCSV(String csvPath) {
         String line;
@@ -399,29 +356,34 @@ scripid stored in pricePerScrip first for version 1 call next for version 2 call
         return recordList;
     }
 
-    private List<List<Double>> readCSVData(String csvPath) {
+    private CsvTickData readCSVData(String csvPath) {
+        CsvTickData retCsvTickData = new CsvTickData();
         String line;
         double index = 1;
         List<List<Double>> recordData = new ArrayList<>();
         List<Double> row = new ArrayList<>();
+        String[] fields = null;
         try {
             BufferedReader brPrev = new BufferedReader(new FileReader(csvPath));
             line = brPrev.readLine();
             while ((line = brPrev.readLine()) != null) {
+                row = new ArrayList<>();
                 // use comma as separator  
-                String[] fields = line.split(",");
+                fields = line.split(",");
                 //fields will now contain all values    
                 row.add(index);
                 row.add(Double.valueOf(fields[3]));
-                recordData.add(row);
-                row = new ArrayList<>();
+                
+                recordData.add(row);                
                 index = index+1;
             }
+            retCsvTickData.setTickData(recordData);  
+            retCsvTickData.setDateTime(fields[1]);
         } catch (IOException ex) {
             ex.printStackTrace();
 //                Logger.getLogger(PerMinuteResposeOfNSE.class.getName()).log(Level.SEVERE, null, ex);
         }       
-        return recordData;
+        return retCsvTickData;
     }
 
     private ResultData fillResult(List<List<Double>> recordData, String scripId, String lastUpdateDate) {
