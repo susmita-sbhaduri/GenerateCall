@@ -14,6 +14,8 @@ import java.io.File;
 import java.util.Arrays;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
@@ -39,45 +41,45 @@ public class GenerateCallDetails2 {
         String[] delimitedString;
         List<ResultData> resultDatas = new ArrayList<ResultData>(); // call list for the last and 
 
-        for (int i = 0; i < dirCount; i++) {
-            scripFolderPath = DataStoreNames.TICKER_DATA_DETAILS.concat(listFileArray.get(i).toString());
-            scripFolderPath = scripFolderPath.concat("/");
-            File fileListPerScrip = new File(scripFolderPath);
-            File[] arrayPerScrip = fileListPerScrip.listFiles();
-            int fileCount = arrayPerScrip.length;
-            Arrays.sort(arrayPerScrip, LASTMODIFIED_COMPARATOR);
-
-            String scripLast = arrayPerScrip[fileCount - 1].getAbsolutePath();
-
-//            System.out.println("scripid" + listFileArray.get(i));
-            delimitedString = scripFolderPath.split("/");
-            String scripId = delimitedString[6];//to be fixed
-            CsvTickData recordDataLast = new CsvTickData();
-            recordDataLast = readCSVData(scripLast);
-            resultDatas.add(fillResult(recordDataLast.getTickData(), scripId, recordDataLast.getDateTime()));
- 
-            RecordCallPrice callToAdd = new RecordCallPrice();
-            callToAdd.setScripID(resultDatas.get(resultDatas.size() - 1).getScripID());
-            callToAdd.setLastUpdateTime(resultDatas.get(resultDatas.size() - 1).getLastUpdateTime());
-            callToAdd.setPrice(resultDatas.get(resultDatas.size() - 1).getPrice());
-            callToAdd.setLastCallVersionOne(resultDatas.get(resultDatas.size() - 1).getLastCallVersionOne());
-            callToAdd.setLastCallVersionTwo(resultDatas.get(resultDatas.size() - 1).getLastCallVersionTwo());
-//            callToAdd.setTallyVersionOne(resultDatas.get(resultDatas.size() - 1).getTallyVersionOne());
-//            callToAdd.setTallyVersionTwo(resultDatas.get(resultDatas.size() - 1).getTallyVersionTwo());
-            callToAdd.setRetraceVersionOne(resultDatas.get(resultDatas.size() - 1).getRetraceVersionOne());
-            callToAdd.setRetraceVersionTwo(resultDatas.get(resultDatas.size() - 1).getRetraceVersionTwo());
-            callToAdd.setPriceBrokerageGstOne(resultDatas.get(resultDatas.size() - 1).getPriceBrokerageGstOne());
-            callToAdd.setPriceBrokerageGstTwo(resultDatas.get(resultDatas.size() - 1).getPriceBrokerageGstTwo());
-
-            recordCalls.add(callToAdd);
-
-            System.out.println("Done in scrip loop");
-
-        }
+//        for (int i = 0; i < dirCount; i++) {
+//            scripFolderPath = DataStoreNames.TICKER_DATA_DETAILS.concat(listFileArray.get(i).toString());
+//            scripFolderPath = scripFolderPath.concat("/");
+//            File fileListPerScrip = new File(scripFolderPath);
+//            File[] arrayPerScrip = fileListPerScrip.listFiles();
+//            int fileCount = arrayPerScrip.length;
+//            Arrays.sort(arrayPerScrip, LASTMODIFIED_COMPARATOR);
+//
+//            String scripLast = arrayPerScrip[fileCount - 1].getAbsolutePath();
+//
+////            System.out.println("scripid" + listFileArray.get(i));
+//            delimitedString = scripFolderPath.split("/");
+//            String scripId = delimitedString[6];//to be fixed
+//            CsvTickData recordDataLast = new CsvTickData();
+//            recordDataLast = readCSVData(scripLast);
+//            resultDatas.add(fillResult(recordDataLast.getTickData(), scripId, recordDataLast.getDateTime()));
+// 
+//            RecordCallPrice callToAdd = new RecordCallPrice();
+//            callToAdd.setScripID(resultDatas.get(resultDatas.size() - 1).getScripID());
+//            callToAdd.setLastUpdateTime(resultDatas.get(resultDatas.size() - 1).getLastUpdateTime());
+//            callToAdd.setPrice(resultDatas.get(resultDatas.size() - 1).getPrice());
+//            callToAdd.setLastCallVersionOne(resultDatas.get(resultDatas.size() - 1).getLastCallVersionOne());
+//            callToAdd.setLastCallVersionTwo(resultDatas.get(resultDatas.size() - 1).getLastCallVersionTwo());
+////            callToAdd.setTallyVersionOne(resultDatas.get(resultDatas.size() - 1).getTallyVersionOne());
+////            callToAdd.setTallyVersionTwo(resultDatas.get(resultDatas.size() - 1).getTallyVersionTwo());
+//            callToAdd.setRetraceVersionOne(resultDatas.get(resultDatas.size() - 1).getRetraceVersionOne());
+//            callToAdd.setRetraceVersionTwo(resultDatas.get(resultDatas.size() - 1).getRetraceVersionTwo());
+//            callToAdd.setPriceBrokerageGstOne(resultDatas.get(resultDatas.size() - 1).getPriceBrokerageGstOne());
+//            callToAdd.setPriceBrokerageGstTwo(resultDatas.get(resultDatas.size() - 1).getPriceBrokerageGstTwo());
+//
+//            recordCalls.add(callToAdd);
+//
+//            System.out.println("Done in scrip loop");
+//
+//        }
         String priceHeading = "EQ,Date,Price,CallOne,CallTwo,RetraceOne,RetraceTwo,"
                 + "PriceGSTOne,PriceGSTTwo";
 
-        String printFile = "/home/sb/Documents/java_testing/calls31java.csv";
+        String printFile = "/home/sb/Documents/java_testing/calls31_matlab_test.csv";
         Collections.sort(recordCalls , new SortCallList());
         PrintMatrix printMatrix = new PrintMatrix();
         printMatrix.printResultData(recordCalls, printFile, priceHeading);
