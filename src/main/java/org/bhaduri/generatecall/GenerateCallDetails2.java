@@ -15,10 +15,12 @@ import java.util.Arrays;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
+import java.util.Comparator;
 
 public class GenerateCallDetails2 {
 
@@ -79,8 +81,10 @@ public class GenerateCallDetails2 {
         String priceHeading = "EQ,Date,Price,CallOne,CallTwo,RetraceOne,RetraceTwo,"
                 + "PriceGSTOne,PriceGSTTwo";
 
-        String printFile = "/home/sb/Documents/java_testing/calls31_matlab_test.csv";
+        String printFile = "/home/sb/Documents/java_testing/calls31_matlab_test1.csv";
+//        String printFile = "/home/sb/Documents/java_testing/test_date.csv";
         Collections.sort(recordCalls , new SortCallList());
+
         PrintMatrix printMatrix = new PrintMatrix();
         printMatrix.printResultData(recordCalls, printFile, priceHeading);
 
