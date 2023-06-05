@@ -4,12 +4,15 @@
  */
 package org.bhaduri.generatecall;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,31 +20,25 @@ import java.util.logging.Logger;
  *
  * @author sb
  */
-
 public class SortCallList implements Comparator<RecordCallPrice> {
-
-    @Override
+ @Override
     public int compare(RecordCallPrice r1, RecordCallPrice r2) {
 //        return r1.getScripID().compareTo(r2.getScripID());
-        int sDate = 0;
-        LocalDate localDateR1 = LocalDate.parse(r1.getLastUpdateTime());
-        LocalDate localDateR2 = LocalDate.parse(r2.getLastUpdateTime());
-        System.out.println(localDateR1);
-        System.out.println(localDateR2);
-        LocalDateTime localDateTimeR1 = localDateR1.atStartOfDay();
-        LocalDateTime localDateTimeR2 = localDateR2.atStartOfDay();
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-        
-//        SimpleDateFormat formatter = new SimpleDateFormat("MMM-dd-yyyy");
-//            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        
-        sDate = localDateTimeR1.format(dtf).compareTo(localDateTimeR2.format(dtf));
-        
-        if (sDate != 0) {
-            return r1.getScripID().compareTo(r2.getScripID());
+        int sDate = 0; 
+        int sComp = 0;
+        sComp = r1.getScripID().compareTo(r2.getScripID());
+              
+        if (sComp == 0) {
+         try {
+             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+//             SimpleDateFormat formatter = new SimpleDateFormat("MMM-dd-yyyy");
+             sDate = formatter.parse(r1.getLastUpdateTime()).compareTo(formatter.parse(r2.getLastUpdateTime()));
+         } catch (ParseException ex) {
+             Logger.getLogger(SortCallList.class.getName()).log(Level.SEVERE, null, ex);
+         }
         } else {
-            return sDate;
+         return sComp;
         }
+        return sDate;
     }
 }
-

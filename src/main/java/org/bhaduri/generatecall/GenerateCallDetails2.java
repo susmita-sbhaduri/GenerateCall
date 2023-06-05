@@ -14,6 +14,10 @@ import java.io.File;
 import java.util.Arrays;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -21,10 +25,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GenerateCallDetails2 {
 
-    public void getFileList() {
+    public void getFileList() throws ParseException {
         
 
         File directory = new File(DataStoreNames.TICKER_DATA_DETAILS);
@@ -130,7 +138,18 @@ public class GenerateCallDetails2 {
                 // use comma as separator  
                 String[] fields = line.split(",");
                 record.setScripID(fields[0]);
-                record.setLastUpdateTime(fields[1]);
+//                record.setLastUpdateTime(fields[1]);
+                
+                DateFormat originalFormat = new SimpleDateFormat("MMM-dd-yyyy", Locale.ENGLISH);
+                DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+                try {
+                    Date date = originalFormat.parse(fields[1]);
+                    String formattedDate = targetFormat.format(date);
+                    record.setLastUpdateTime(formattedDate);
+                } catch (ParseException ex) {
+                    record.setLastUpdateTime(fields[1]);
+                }
+                
                 record.setPrice(Double.valueOf(fields[2]));
                 record.setLastCallVersionOne(fields[3]);
                 record.setLastCallVersionTwo(fields[4]);

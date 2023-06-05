@@ -4,13 +4,15 @@
  */
 package org.bhaduri.generatecall;
 
+import java.text.ParseException;
+
 /**
  *
  * @author sb
  */
 public class GenerateCall {
     
-    public static void main(String[] args){
+    public static void main(String[] args) throws ParseException{
 //        GenerateCallDetails generateCallDetails = new GenerateCallDetails();
 //        generateCallDetails.getFileList();
 //        GenerateCallDetails1 generateCallDetails1 = new GenerateCallDetails1();
