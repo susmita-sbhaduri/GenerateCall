@@ -4,6 +4,7 @@
  */
 package org.bhaduri.generatecall;
 
+
 /**
  *
  * @author sb
@@ -17,86 +18,186 @@ import java.io.FileReader;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class GenerateCallDetails2 {
 
-    public void getFileList() throws ParseException {
+    public void getFileList() {
         
 
         File directory = new File(DataStoreNames.TICKER_DATA_DETAILS);
         List listFileArray = Arrays.asList(directory.list());
         Collections.sort(listFileArray); //directories are sorted as per their name
         int dirCount = listFileArray.size();
-       
+        
         String titleExist;
         List<RecordCallPrice> recordCalls = new ArrayList<>();
         titleExist = "yes";
-        recordCalls = readCSVCallList(DataStoreNames.CALL_DATA_PATH, titleExist);
+        recordCalls = readCSVCallList(DataStoreNames.INPUT_CALL_DATA_PATH, titleExist);
+//        List<RecordCallPrice> recordPrice = new ArrayList<>();
+//        recordPrice = readCSVCallList(DataStoreNames.CALL_DATA_PATH, titleExist);
         titleExist = "no";
 
-
+//       
         String scripFolderPath = "";
         String[] delimitedString;
         List<ResultData> resultDatas = new ArrayList<ResultData>(); // call list for the last and 
+//        previous days file using elliot curve algo
 
-//        for (int i = 0; i < dirCount; i++) {
-//            scripFolderPath = DataStoreNames.TICKER_DATA_DETAILS.concat(listFileArray.get(i).toString());
-//            scripFolderPath = scripFolderPath.concat("/");
-//            File fileListPerScrip = new File(scripFolderPath);
-//            File[] arrayPerScrip = fileListPerScrip.listFiles();
-//            int fileCount = arrayPerScrip.length;
-//            Arrays.sort(arrayPerScrip, LASTMODIFIED_COMPARATOR);
-//
-//            String scripLast = arrayPerScrip[fileCount - 1].getAbsolutePath();
-//
-////            System.out.println("scripid" + listFileArray.get(i));
-//            delimitedString = scripFolderPath.split("/");
-//            String scripId = delimitedString[6];//to be fixed
-//            CsvTickData recordDataLast = new CsvTickData();
-//            recordDataLast = readCSVData(scripLast);
-//            resultDatas.add(fillResult(recordDataLast.getTickData(), scripId, recordDataLast.getDateTime()));
-// 
-//            RecordCallPrice callToAdd = new RecordCallPrice();
-//            callToAdd.setScripID(resultDatas.get(resultDatas.size() - 1).getScripID());
-//            callToAdd.setLastUpdateTime(resultDatas.get(resultDatas.size() - 1).getLastUpdateTime());
-//            callToAdd.setPrice(resultDatas.get(resultDatas.size() - 1).getPrice());
-//            callToAdd.setLastCallVersionOne(resultDatas.get(resultDatas.size() - 1).getLastCallVersionOne());
-//            callToAdd.setLastCallVersionTwo(resultDatas.get(resultDatas.size() - 1).getLastCallVersionTwo());
-////            callToAdd.setTallyVersionOne(resultDatas.get(resultDatas.size() - 1).getTallyVersionOne());
-////            callToAdd.setTallyVersionTwo(resultDatas.get(resultDatas.size() - 1).getTallyVersionTwo());
-//            callToAdd.setRetraceVersionOne(resultDatas.get(resultDatas.size() - 1).getRetraceVersionOne());
-//            callToAdd.setRetraceVersionTwo(resultDatas.get(resultDatas.size() - 1).getRetraceVersionTwo());
-//            callToAdd.setPriceBrokerageGstOne(resultDatas.get(resultDatas.size() - 1).getPriceBrokerageGstOne());
-//            callToAdd.setPriceBrokerageGstTwo(resultDatas.get(resultDatas.size() - 1).getPriceBrokerageGstTwo());
-//
-//            recordCalls.add(callToAdd);
-//
-//            System.out.println("Done in scrip loop");
-//
-//        }
+        for (int i = 0; i < dirCount; i++) {
+            scripFolderPath = DataStoreNames.TICKER_DATA_DETAILS.concat(listFileArray.get(i).toString());
+            scripFolderPath = scripFolderPath.concat("/");
+            File fileListPerScrip = new File(scripFolderPath);
+            File[] arrayPerScrip = fileListPerScrip.listFiles();
+            int fileCount = arrayPerScrip.length;
+            Arrays.sort(arrayPerScrip, LASTMODIFIED_COMPARATOR);
+
+//            String scripPrev = arrayPerScrip[fileCount - 2].getAbsolutePath();
+            String scripLast = arrayPerScrip[fileCount - 1].getAbsolutePath();
+
+            System.out.println("scripid" + listFileArray.get(i));
+            delimitedString = scripFolderPath.split("/");
+            String scripId = delimitedString[6];//to be fixed
+            CsvTickData recordDataLast = new CsvTickData();
+            recordDataLast = readCSVData(scripLast);
+            resultDatas.add(fillResult(recordDataLast.getTickData(), scripId, recordDataLast.getDateTime()));
+
+/////////// Update existing call list for today's call
+            RecordCallPrice callToAdd = new RecordCallPrice();
+            //latest call record
+            callToAdd.setScripID(resultDatas.get(resultDatas.size() - 1).getScripID());
+            callToAdd.setLastUpdateTime(resultDatas.get(resultDatas.size() - 1).getLastUpdateTime());
+            callToAdd.setPrice(resultDatas.get(resultDatas.size() - 1).getPrice());
+            callToAdd.setLastCallVersionOne(resultDatas.get(resultDatas.size() - 1).getLastCallVersionOne());
+            callToAdd.setLastCallVersionTwo(resultDatas.get(resultDatas.size() - 1).getLastCallVersionTwo());
+//            callToAdd.setTallyVersionOne(resultDatas.get(resultDatas.size() - 1).getTallyVersionOne());
+//            callToAdd.setTallyVersionTwo(resultDatas.get(resultDatas.size() - 1).getTallyVersionTwo());
+            callToAdd.setRetraceVersionOne(resultDatas.get(resultDatas.size() - 1).getRetraceVersionOne());
+            callToAdd.setRetraceVersionTwo(resultDatas.get(resultDatas.size() - 1).getRetraceVersionTwo());
+            callToAdd.setPriceBrokerageGstOne(resultDatas.get(resultDatas.size() - 1).getPriceBrokerageGstOne());
+            callToAdd.setPriceBrokerageGstTwo(resultDatas.get(resultDatas.size() - 1).getPriceBrokerageGstTwo());
+
+            recordCalls.add(callToAdd);
+
+/////////// Update existing call list for today's call
+///////////Update price list for today's call
+//            RecordCallPrice priceCallToAdd = new RecordCallPrice();
+//            //copy latest call record
+//            priceCallToAdd.setScripID(callToAdd.getScripID());
+//            priceCallToAdd.setLastUpdateTime(callToAdd.getLastUpdateTime());
+//            priceCallToAdd.setPrice(callToAdd.getPrice());
+//            priceCallToAdd.setLastCallVersionOne(callToAdd.getLastCallVersionOne());
+//            priceCallToAdd.setLastCallVersionTwo(callToAdd.getLastCallVersionTwo());
+//            priceCallToAdd.setTallyVersionOne(callToAdd.getTallyVersionOne());
+//            priceCallToAdd.setTallyVersionTwo(callToAdd.getTallyVersionTwo());
+//            priceCallToAdd.setRetraceVersionOne(callToAdd.getRetraceVersionOne());
+//            priceCallToAdd.setRetraceVersionTwo(callToAdd.getRetraceVersionTwo());
+//            priceCallToAdd.setPriceBrokerageGstOne(callToAdd.getPriceBrokerageGstOne());
+//            priceCallToAdd.setPriceBrokerageGstTwo(callToAdd.getPriceBrokerageGstTwo());
+//            recordPrice.add(priceCallToAdd);
+            ///////////Update price list for today's call
+            //########################################################################
+//          call list ends here
+//########################################################################
+/*latest call is taken from  resultDatas and if it's "sell" it's checked from previous buys for each 
+scripid stored in pricePerScrip first for version 1 call next for version 2 call*/
+//########################################################################
+//            double buyAccumulated = 0.0;
+//            int buyCount = 0;
+//            if (resultDatas.get(resultDatas.size() - 1).getLastCallVersionOne().equals("sell")) {
+//                for (int ii = pricePerScrip.size() - 2; ii > 0; ii--) {
+//                    if (pricePerScrip.get(ii).getLastCallVersionOne().equals("buy")) {
+//                        buyCount = buyCount + 1;
+//                        buyAccumulated = buyAccumulated
+//                                + pricePerScrip.get(ii).getPriceBrokerageGstOne();
+//                    }
+//                    if (pricePerScrip.get(ii).getLastCallVersionOne().equals("sell")) {
+//                        if (buyCount > 0) {
+//                            if ((buyAccumulated / buyCount) > resultDatas.get(resultDatas.size() - 1).getPrice()) {
+//                                resultDatas.get(resultDatas.size() - 1).setLastCallOneUpdated("no-sell");
+//                                resultDatas.get(resultDatas.size() - 1).setTallyOneUpdated("");
+//                                pricePerScrip.get(pricePerScrip.size() - 1).setLastCallVersionOne("no-sell");
+//                                pricePerScrip.get(pricePerScrip.size() - 1).setTallyVersionOne("");
+//                            }
+//                        }
+//                        break;
+//                    }
+//                    if (ii == 1 && !pricePerScrip.get(ii).getLastCallVersionOne().equals("sell")
+//                            && buyCount > 0) {
+//                        if ((buyAccumulated / buyCount) > resultDatas.get(resultDatas.size() - 1).getPrice()) {
+//                            resultDatas.get(resultDatas.size() - 1).setLastCallOneUpdated("no-sell");
+//                            resultDatas.get(resultDatas.size() - 1).setTallyOneUpdated("");
+//                            pricePerScrip.get(pricePerScrip.size() - 1).setLastCallVersionOne("no-sell");
+//                            pricePerScrip.get(pricePerScrip.size() - 1).setTallyVersionOne("");
+//                        }
+//                    }
+//                }
+//            }
+            /////////////////////////////////////////////////////////////////////////////////////////////////////         
+//            buyAccumulated = 0.0;
+//            buyCount = 0;
+//            if (resultDatas.get(resultDatas.size() - 1).getLastCallVersionTwo().equals("sell")) {
+//                for (int ii = pricePerScrip.size() - 2; ii > 0; ii--) {
+//                    if (pricePerScrip.get(ii).getLastCallVersionTwo().equals("buy")) {
+//                        buyCount = buyCount + 1;
+//                        buyAccumulated = buyAccumulated
+//                                + pricePerScrip.get(ii).getPriceBrokerageGstTwo();
+//                    }
+//                    if (pricePerScrip.get(ii).getLastCallVersionTwo().equals("sell")) {
+//                        if (buyCount > 0) {
+////                        selling price should be more than last buy price+0.5% commision+GST
+//                            if ((buyAccumulated / buyCount) > resultDatas.get(resultDatas.size() - 1).getPrice()) {
+//                                resultDatas.get(resultDatas.size() - 1).setLastCallTwoUpdated("no-sell");
+//                                resultDatas.get(resultDatas.size() - 1).setTallyVersionTwo("");
+//                                pricePerScrip.get(pricePerScrip.size() - 1).setLastCallVersionTwo("no-sell");
+//                                pricePerScrip.get(pricePerScrip.size() - 1).setTallyVersionTwo("");
+//                            }
+//                        }
+//                        break;
+//                    }
+//                    if (ii == 1 && !pricePerScrip.get(ii).getLastCallVersionTwo().equals("sell")
+//                            && buyCount > 0) {
+//                        if ((buyAccumulated / buyCount) > resultDatas.get(resultDatas.size() - 1).getPrice()) {
+//                            resultDatas.get(resultDatas.size() - 1).setLastCallTwoUpdated("no-sell");
+//                            resultDatas.get(resultDatas.size() - 1).setTallyVersionTwo("");
+//                            pricePerScrip.get(pricePerScrip.size() - 1).setLastCallVersionTwo("no-sell");
+//                            pricePerScrip.get(pricePerScrip.size() - 1).setTallyVersionTwo("");
+//                        }
+//                    }
+//                }
+//            }
+//########################################################################
+/*latest call is taken from  resultDatas and if it's "sell" it's checked from previous buys for each 
+scripid stored in pricePerScrip first for version 1 call next for version 2 call*/
+//########################################################################
+            System.out.println("Done in scrip loop");
+//            printUpdatedList.addAll(pricePerScrip);
+        }
+
+//        ////////////////////////////////////////////////////////////////////////
+//        int indexL = prevIndex(recordPrev, recordLast);
+//        System.out.println("indexL:" +  Integer.toString(indexL));
+//        https://www.geeksforgeeks.org/arraylist-sublist-method-in-java-with-examples/
+//        String printFile = "/home/sb/Documents/java_testing/calls10thmayjava.csv";
         String priceHeading = "EQ,Date,Price,CallOne,CallTwo,RetraceOne,RetraceTwo,"
                 + "PriceGSTOne,PriceGSTTwo";
 
-        String printFile = "/home/sb/Documents/java_testing/calls31_matlab_test1.csv";
-//        String printFile = "/home/sb/Documents/java_testing/test_date.csv";
+        String printFile = "/home/sb/Documents/java_testing/calls06java.csv";
         Collections.sort(recordCalls , new SortCallList());
-
         PrintMatrix printMatrix = new PrintMatrix();
         printMatrix.printResultData(recordCalls, printFile, priceHeading);
+        
+//        ValidateCallDetails validateCallDetails = new ValidateCallDetails(TICKER_DATA_DETAILS,
+//        recordCalls.get(recordCalls.size()-1), priceCallToAdd);
 
-
+//        String priceFile = "/home/sb/Documents/java_testing/price24thmayjava1.csv";
+//        printMatrix = new PrintMatrix();
+////        printMatrix.saveListData(printUpdatedList, priceFile,priceHeading);
+//        printMatrix.printResultData(printUpdatedList, priceFile, priceHeading);
 
         System.out.println("Done");
         ////////////////////////////////////////////////////////////////////////
@@ -139,7 +240,6 @@ public class GenerateCallDetails2 {
                 String[] fields = line.split(",");
                 record.setScripID(fields[0]);
 //                record.setLastUpdateTime(fields[1]);
-                
                 DateFormat originalFormat = new SimpleDateFormat("MMM-dd-yyyy", Locale.ENGLISH);
                 DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
                 try {
@@ -149,7 +249,6 @@ public class GenerateCallDetails2 {
                 } catch (ParseException ex) {
                     record.setLastUpdateTime(fields[1]);
                 }
-                
                 record.setPrice(Double.valueOf(fields[2]));
                 record.setLastCallVersionOne(fields[3]);
                 record.setLastCallVersionTwo(fields[4]);

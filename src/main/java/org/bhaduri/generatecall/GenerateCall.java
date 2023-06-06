@@ -4,7 +4,6 @@
  */
 package org.bhaduri.generatecall;
 
-import java.text.ParseException;
 
 /**
  *
@@ -12,13 +11,13 @@ import java.text.ParseException;
  */
 public class GenerateCall {
     
-    public static void main(String[] args) throws ParseException{
+    public static void main(String[] args) {
 //        GenerateCallDetails generateCallDetails = new GenerateCallDetails();
 //        generateCallDetails.getFileList();
-//        GenerateCallDetails1 generateCallDetails1 = new GenerateCallDetails1();
-//        generateCallDetails1.getFileList();
-        GenerateCallDetails2 generateCallDetails2 = new GenerateCallDetails2();
-        generateCallDetails2.getFileList();
+        GenerateCallDetails1 generateCallDetails1 = new GenerateCallDetails1();
+        generateCallDetails1.getFileList();
+//        GenerateCallDetails2 generateCallDetails2 = new GenerateCallDetails2();
+//        generateCallDetails2.getFileList();
 
     }
     

@@ -14,9 +14,14 @@ import java.io.File;
 import java.util.Arrays;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
+import java.util.Date;
+import java.util.Locale;
 
 public class GenerateCallDetails1 {
 
@@ -40,7 +45,7 @@ public class GenerateCallDetails1 {
         String titleExist;
         List<RecordCallPrice> recordCalls = new ArrayList<>();
         titleExist = "yes";
-        recordCalls = readCSVCallList(DataStoreNames.CALL_DATA_PATH, titleExist);
+        recordCalls = readCSVCallList(DataStoreNames.INPUT_CALL_DATA_PATH, titleExist);
         titleExist = "no";
 
 //        List<RecordCallPrice> recordCallUpdated = new ArrayList<>();//input call list
@@ -284,7 +289,7 @@ scripid stored in pricePerScrip first for version 1 call next for version 2 call
         String priceHeading = "EQ,Date,Price,CallOne,CallTwo,RetraceOne,RetraceTwo,"
                 + "PriceGSTOne,PriceGSTTwo";
 
-        String printFile = "/home/sb/Documents/java_testing/calls31java.csv";
+        String printFile = DataStoreNames.OUTPUT_CALL_DATA_PATH;
         Collections.sort(recordCalls , new SortCallList());
         PrintMatrix printMatrix = new PrintMatrix();
         printMatrix.printResultData(recordCalls, printFile, priceHeading);
@@ -334,7 +339,16 @@ scripid stored in pricePerScrip first for version 1 call next for version 2 call
                 // use comma as separator  
                 String[] fields = line.split(",");
                 record.setScripID(fields[0]);
-                record.setLastUpdateTime(fields[1]);
+//                record.setLastUpdateTime(fields[1]);
+                DateFormat originalFormat = new SimpleDateFormat("MMM-dd-yyyy", Locale.ENGLISH);
+                DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+                try {
+                    Date date = originalFormat.parse(fields[1]);
+                    String formattedDate = targetFormat.format(date);
+                    record.setLastUpdateTime(formattedDate);
+                } catch (ParseException ex) {
+                    record.setLastUpdateTime(fields[1]);
+                }
                 record.setPrice(Double.valueOf(fields[2]));
                 record.setLastCallVersionOne(fields[3]);
                 record.setLastCallVersionTwo(fields[4]);
