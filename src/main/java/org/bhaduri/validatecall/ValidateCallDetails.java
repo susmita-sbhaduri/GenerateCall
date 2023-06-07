@@ -11,51 +11,97 @@ package org.bhaduri.validatecall;
 import org.bhaduri.generatecall.*;
 import java.io.IOException;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
 public class ValidateCallDetails {
 
     String latestTickDataPath;  
-    String updatedCallData;
-    String inputPriceData;
-    RecordCallPrice latestCallData = new RecordCallPrice();
-    RecordCallPrice previousCallData = new RecordCallPrice();
+    String updatedCallDataPath;
+    String inputPriceDataPath;
+    String outputPriceDataPath;
+    String statusString;
     
 //    String previousCall;
 //    CsvTickData recordDataLast = new CsvTickData();
 //    List<RecordCallPrice> callListInput = new ArrayList<>();
-    RecordCallPrice prevCallUpdated = new RecordCallPrice();;
+//    RecordCallPrice prevCallUpdated = new RecordCallPrice();;
 //    int ob;
 
-    public ValidateCallDetails(String latestTickDataPath, String updatedCallData,
-            String inputPriceData) {
+    public ValidateCallDetails(String latestTickDataPath, String updatedCallDataPath,
+            String inputPriceDataPath, String outputPriceDataPath) {
         
         this.latestTickDataPath = latestTickDataPath;
-        this.updatedCallData=updatedCallData;
-        this.inputPriceData=inputPriceData;
+        this.updatedCallDataPath=updatedCallDataPath;
+        this.inputPriceDataPath=inputPriceDataPath;
+        this.outputPriceDataPath=outputPriceDataPath;
         processInput();
     }
 //
     private void processInput() {
-        CsvTickData lastCsvTickData = new CsvTickData();
+        File directory = new File(latestTickDataPath);
+        List listFileArray = Arrays.asList(directory.list());
+        Collections.sort(listFileArray); //directories are sorted as per their name
+        
+        List<RecordCallPrice> updatedCalls = new ArrayList<>();
+        String titleExist = "yes";
+        updatedCalls=readCSVCallList(updatedCallDataPath, titleExist);
+                
+        List<RecordCallPrice> updatedPrice = new ArrayList<>();
+        titleExist = "yes";
+        updatedPrice=readCSVCallList(inputPriceDataPath, titleExist);
+        
+        
+        CsvTickData lastCsvTickData = new CsvTickData();        
         lastCsvTickData = readLastTickerData(latestTickDataPath,
-                latestCallData.getLastUpdateTime());
+                updatedCalls.get(updatedPrice.size()-1).getLastUpdateTime());
+        
         String tally = "";
-        tally = fillTally(latestCallData.getLastCallVersionOne(), lastCsvTickData.getTickData(), previousCallData.getPrice());
-        this.prevCallUpdated.setTallyVersionOne(tally);
+        tally = fillTally(updatedPrice.get(updatedPrice.size()-1).getLastCallVersionOne(), lastCsvTickData.getTickData(), 
+                updatedPrice.get(updatedPrice.size()-1).getPrice());
+        updatedPrice.get(updatedPrice.size()-1).setTallyVersionOne(tally);
         
         tally = "";
-        tally = fillTally(latestCallData.getLastCallVersionTwo(), lastCsvTickData.getTickData(), previousCallData.getPrice());
-        this.prevCallUpdated.setTallyVersionTwo(tally);          
+        tally = fillTally(updatedPrice.get(updatedPrice.size()-1).getLastCallVersionTwo(), lastCsvTickData.getTickData(), 
+                updatedPrice.get(updatedPrice.size()-1).getPrice());
+        updatedPrice.get(updatedPrice.size()-1).setTallyVersionTwo(tally);
+        
+        updatedPrice.add(updatedCalls.get(updatedCalls.size()-1));
+        
+        String priceHeading = "EQ,Date,Price,CallOne,CallTwo,TallyOne,TallyTwo,RetraceOne,RetraceTwo,"
+                + "PriceGSTOne,PriceGSTTwo";
+        Collections.sort(updatedPrice , new SortCallList());
+        PrintMatrix printMatrix = new PrintMatrix();
+        printMatrix.printResultData(updatedPrice, outputPriceDataPath, priceHeading);
+        statusString = "done";
+        
+        ///////////Update price list for today's call
+//            RecordCallPrice priceCallToAdd = new RecordCallPrice();
+//            //copy latest call record
+//            priceCallToAdd.setScripID(callToAdd.getScripID());
+//            priceCallToAdd.setLastUpdateTime(callToAdd.getLastUpdateTime());
+//            priceCallToAdd.setPrice(callToAdd.getPrice());
+//            priceCallToAdd.setLastCallVersionOne(callToAdd.getLastCallVersionOne());
+//            priceCallToAdd.setLastCallVersionTwo(callToAdd.getLastCallVersionTwo());
+//            priceCallToAdd.setTallyVersionOne(callToAdd.getTallyVersionOne());
+//            priceCallToAdd.setTallyVersionTwo(callToAdd.getTallyVersionTwo());
+//            priceCallToAdd.setRetraceVersionOne(callToAdd.getRetraceVersionOne());
+//            priceCallToAdd.setRetraceVersionTwo(callToAdd.getRetraceVersionTwo());
+//            priceCallToAdd.setPriceBrokerageGstOne(callToAdd.getPriceBrokerageGstOne());
+//            priceCallToAdd.setPriceBrokerageGstTwo(callToAdd.getPriceBrokerageGstTwo());
+//            recordPrice.add(priceCallToAdd);
+            ///////////Update price list for today's call
 //        this.oa = ia + 1;
 //        this.ob = ib + 1;
     }
 
-    public RecordCallPrice getPrevCallUpdated() {
-        return prevCallUpdated;
+    public String getValidateStatus() {
+        return statusString;
     }
 
     
@@ -133,6 +179,42 @@ public class ValidateCallDetails {
             }
         }
         return tally;
+    }
+    
+    private List<RecordCallPrice> readCSVCallList(String csvPath, String titleFlag) {
+        String line;
+        List<RecordCallPrice> recordList = new ArrayList<>();
+        RecordCallPrice record = new RecordCallPrice();
+        try {
+            BufferedReader brPrev = new BufferedReader(new FileReader(csvPath));
+            if (titleFlag.equals("yes")) {
+                line = brPrev.readLine();
+            }
+            while ((line = brPrev.readLine()) != null) {
+                // use comma as separator  
+                String[] fields = line.split(",");
+                record.setScripID(fields[0]);                
+                record.setLastUpdateTime(fields[1]);
+                record.setPrice(Double.valueOf(fields[2]));
+                record.setLastCallVersionOne(fields[3]);
+                record.setLastCallVersionTwo(fields[4]);
+                record.setTallyVersionOne(fields[5]);
+                record.setTallyVersionTwo(fields[6]);
+                record.setRetraceVersionOne(Double.valueOf(fields[5]));
+                record.setRetraceVersionTwo(Double.valueOf(fields[6]));
+                record.setPriceBrokerageGstOne(Double.valueOf(fields[7]));
+                record.setPriceBrokerageGstTwo(Double.valueOf(fields[8]));
+
+                //fields will now contain all values    
+                recordList.add(record);
+                record = new RecordCallPrice();
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+//                Logger.getLogger(PerMinuteResposeOfNSE.class.getName()).log(Level.SEVERE, null, ex);
+        }
+//        System.out.println("recordTest:" + records.get(records.size() - 1).get(1));
+        return recordList;
     }
 
 }
