@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import static org.apache.commons.io.comparator.LastModifiedFileComparator.LASTMODIFIED_COMPARATOR;
 
 
 public class ValidateCallDetails {
@@ -47,31 +48,51 @@ public class ValidateCallDetails {
         File directory = new File(latestTickDataPath);
         List listFileArray = Arrays.asList(directory.list());
         Collections.sort(listFileArray); //directories are sorted as per their name
+        int dirCount = listFileArray.size();
         
-        List<RecordCallPrice> updatedCalls = new ArrayList<>();
-        String titleExist = "yes";
-        updatedCalls=readCSVCallList(updatedCallDataPath, titleExist);
-                
-        List<RecordCallPrice> updatedPrice = new ArrayList<>();
-        titleExist = "yes";
-        updatedPrice=readCSVCallList(inputPriceDataPath, titleExist);
+        String scripFolderPath = "";
+        String[] delimitedString;
+        List<RecordCallPrice> updatedCalls;
+        List<RecordCallPrice> updatedPrice = null;
+        CsvTickData lastCsvTickData;
         
-        
-        CsvTickData lastCsvTickData = new CsvTickData();        
-        lastCsvTickData = readLastTickerData(latestTickDataPath,
-                updatedCalls.get(updatedPrice.size()-1).getLastUpdateTime());
-        
-        String tally = "";
-        tally = fillTally(updatedPrice.get(updatedPrice.size()-1).getLastCallVersionOne(), lastCsvTickData.getTickData(), 
-                updatedPrice.get(updatedPrice.size()-1).getPrice());
-        updatedPrice.get(updatedPrice.size()-1).setTallyVersionOne(tally);
-        
-        tally = "";
-        tally = fillTally(updatedPrice.get(updatedPrice.size()-1).getLastCallVersionTwo(), lastCsvTickData.getTickData(), 
-                updatedPrice.get(updatedPrice.size()-1).getPrice());
-        updatedPrice.get(updatedPrice.size()-1).setTallyVersionTwo(tally);
-        
-        updatedPrice.add(updatedCalls.get(updatedCalls.size()-1));
+        for (int i = 0; i < dirCount; i++) {
+            scripFolderPath = latestTickDataPath.concat(listFileArray.get(i).toString());
+            scripFolderPath = scripFolderPath.concat("/");
+            File fileListPerScrip = new File(scripFolderPath);
+            File[] arrayPerScrip = fileListPerScrip.listFiles();
+            int fileCount = arrayPerScrip.length;
+            Arrays.sort(arrayPerScrip, LASTMODIFIED_COMPARATOR);
+
+            String scripLast = arrayPerScrip[fileCount - 1].getAbsolutePath();
+            delimitedString = scripFolderPath.split("/");
+            String scripId = delimitedString[6];//to be fixed
+            
+            updatedCalls = new ArrayList<>();
+            String titleExist = "yes";
+            updatedCalls = readCSVCallList(updatedCallDataPath, titleExist, scripId);
+
+            updatedPrice = new ArrayList<>();
+            titleExist = "yes";
+            updatedPrice = readCSVCallList(inputPriceDataPath, titleExist, scripId);
+
+            lastCsvTickData = new CsvTickData();
+            lastCsvTickData = readLastTickerData(scripLast,
+                    updatedCalls.get(updatedCalls.size() - 2).getLastUpdateTime());
+            
+            String tally = "";
+            tally = fillTally(updatedPrice.get(updatedPrice.size() - 1).getLastCallVersionOne(), lastCsvTickData.getTickData(),
+                    updatedPrice.get(updatedPrice.size() - 1).getPrice());
+            updatedPrice.get(updatedPrice.size() - 1).setTallyVersionOne(tally);
+
+            tally = "";
+            tally = fillTally(updatedPrice.get(updatedPrice.size() - 1).getLastCallVersionTwo(), lastCsvTickData.getTickData(),
+                    updatedPrice.get(updatedPrice.size() - 1).getPrice());
+            updatedPrice.get(updatedPrice.size() - 1).setTallyVersionTwo(tally);
+
+            updatedPrice.add(updatedCalls.get(updatedCalls.size()-1));
+
+        }
         
         String priceHeading = "EQ,Date,Price,CallOne,CallTwo,TallyOne,TallyTwo,RetraceOne,RetraceTwo,"
                 + "PriceGSTOne,PriceGSTTwo";
@@ -181,33 +202,41 @@ public class ValidateCallDetails {
         return tally;
     }
     
-    private List<RecordCallPrice> readCSVCallList(String csvPath, String titleFlag) {
+    private List<RecordCallPrice> readCSVCallList(String csvPath, String titleFlag, String scripID) {
         String line;
+        int flag = 0;
         List<RecordCallPrice> recordList = new ArrayList<>();
         RecordCallPrice record = new RecordCallPrice();
         try {
             BufferedReader brPrev = new BufferedReader(new FileReader(csvPath));
             if (titleFlag.equals("yes")) {
                 line = brPrev.readLine();
+                flag = 1;
             }
             while ((line = brPrev.readLine()) != null) {
                 // use comma as separator  
                 String[] fields = line.split(",");
-                record.setScripID(fields[0]);                
-                record.setLastUpdateTime(fields[1]);
-                record.setPrice(Double.valueOf(fields[2]));
-                record.setLastCallVersionOne(fields[3]);
-                record.setLastCallVersionTwo(fields[4]);
-                record.setTallyVersionOne(fields[5]);
-                record.setTallyVersionTwo(fields[6]);
-                record.setRetraceVersionOne(Double.valueOf(fields[5]));
-                record.setRetraceVersionTwo(Double.valueOf(fields[6]));
-                record.setPriceBrokerageGstOne(Double.valueOf(fields[7]));
-                record.setPriceBrokerageGstTwo(Double.valueOf(fields[8]));
+                if (fields[0].equals(scripID)) {
+                    record.setScripID(fields[0]);
+                    record.setLastUpdateTime(fields[1]);
+                    record.setPrice(Double.valueOf(fields[2]));
+                    record.setLastCallVersionOne(fields[3]);
+                    record.setLastCallVersionTwo(fields[4]);
+                    record.setTallyVersionOne(fields[5]);
+                    record.setTallyVersionTwo(fields[6]);
+                    record.setRetraceVersionOne(Double.valueOf(fields[5]));
+                    record.setRetraceVersionTwo(Double.valueOf(fields[6]));
+                    record.setPriceBrokerageGstOne(Double.valueOf(fields[7]));
+                    record.setPriceBrokerageGstTwo(Double.valueOf(fields[8]));
 
-                //fields will now contain all values    
-                recordList.add(record);
-                record = new RecordCallPrice();
+                    //fields will now contain all values    
+                    recordList.add(record);
+                    record = new RecordCallPrice();
+                    flag = 2;
+                }
+                if(flag==2 && (fields[0].equals(scripID)==false)){
+                    break;
+                }
             }
         } catch (IOException ex) {
             ex.printStackTrace();
