@@ -189,7 +189,8 @@ scripid stored in pricePerScrip first for version 1 call next for version 2 call
         String printFile = "/home/sb/Documents/java_testing/calls06java.csv";
         Collections.sort(recordCalls , new SortCallList());
         PrintMatrix printMatrix = new PrintMatrix();
-        printMatrix.printResultData(recordCalls, printFile, priceHeading);
+        String callOrPrice = "call";
+        printMatrix.printResultData(recordCalls, printFile, priceHeading, callOrPrice);
         
 //        ValidateCallDetails validateCallDetails = new ValidateCallDetails(TICKER_DATA_DETAILS,
 //        recordCalls.get(recordCalls.size()-1), priceCallToAdd);

@@ -70,26 +70,45 @@ public class PrintMatrix {
 
     }
     
-    public void printResultData(List<RecordCallPrice> dataToPrint, String printFile, String titleString) {
+    public void printResultData(List<RecordCallPrice> dataToPrint, String printFile,
+            String titleString, String callOrPrice) {
         try {
             File output = new File(printFile);
             output.createNewFile();
             PrintStream write = new PrintStream(output);
-            write.print(titleString);
-            write.println();
-            for (int i = 0; i < dataToPrint.size(); i++) {                
-                write.print(dataToPrint.get(i).getScripID()
-                +","+dataToPrint.get(i).getLastUpdateTime()
-                +","+dataToPrint.get(i).getPrice().toString()
-                +","+dataToPrint.get(i).getLastCallVersionOne()
-                +","+dataToPrint.get(i).getLastCallVersionTwo()
-//                +","+dataToPrint.get(i).getTallyVersionOne()
-//                +","+dataToPrint.get(i).getTallyVersionTwo()
-                +","+dataToPrint.get(i).getRetraceVersionOne().toString()
-                +","+dataToPrint.get(i).getRetraceVersionTwo().toString()
-                +","+dataToPrint.get(i).getPriceBrokerageGstOne().toString()
-                +","+dataToPrint.get(i).getPriceBrokerageGstTwo().toString());
+            if (callOrPrice.equals("call")) {
+                write.print(titleString);
                 write.println();
+                for (int i = 0; i < dataToPrint.size(); i++) {
+                    write.print(dataToPrint.get(i).getScripID()
+                            + "," + dataToPrint.get(i).getLastUpdateTime()
+                            + "," + dataToPrint.get(i).getPrice().toString()
+                            + "," + dataToPrint.get(i).getLastCallVersionOne()
+                            + "," + dataToPrint.get(i).getLastCallVersionTwo()                            
+                            + "," + dataToPrint.get(i).getRetraceVersionOne().toString()
+                            + "," + dataToPrint.get(i).getRetraceVersionTwo().toString()
+                            + "," + dataToPrint.get(i).getPriceBrokerageGstOne().toString()
+                            + "," + dataToPrint.get(i).getPriceBrokerageGstTwo().toString());
+                    write.println();
+                }
+            }
+            if (callOrPrice.equals("price")) {
+                write.print(titleString);
+                write.println();
+                for (int i = 0; i < dataToPrint.size(); i++) {
+                    write.print(dataToPrint.get(i).getScripID()
+                            + "," + dataToPrint.get(i).getLastUpdateTime()
+                            + "," + dataToPrint.get(i).getPrice().toString()
+                            + "," + dataToPrint.get(i).getLastCallVersionOne()
+                            + "," + dataToPrint.get(i).getLastCallVersionTwo()
+                            + "," + dataToPrint.get(i).getTallyVersionOne()
+                            + "," + dataToPrint.get(i).getTallyVersionTwo()
+                            + "," + dataToPrint.get(i).getRetraceVersionOne().toString()
+                            + "," + dataToPrint.get(i).getRetraceVersionTwo().toString()
+                            + "," + dataToPrint.get(i).getPriceBrokerageGstOne().toString()
+                            + "," + dataToPrint.get(i).getPriceBrokerageGstTwo().toString());
+                    write.println();
+                }
             }
             write.close();
         } catch (IOException ex) {

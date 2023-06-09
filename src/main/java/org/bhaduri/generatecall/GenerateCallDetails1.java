@@ -290,9 +290,10 @@ scripid stored in pricePerScrip first for version 1 call next for version 2 call
                 + "PriceGSTOne,PriceGSTTwo";
 
         String printFile = DataStoreNames.OUTPUT_CALL_DATA_PATH;
+        String callOrPrice = "call";
         Collections.sort(recordCalls , new SortCallList());
         PrintMatrix printMatrix = new PrintMatrix();
-        printMatrix.printResultData(recordCalls, printFile, priceHeading);
+        printMatrix.printResultData(recordCalls, printFile, priceHeading, callOrPrice);
 
 //        String priceFile = "/home/sb/Documents/java_testing/price24thmayjava1.csv";
 //        printMatrix = new PrintMatrix();
