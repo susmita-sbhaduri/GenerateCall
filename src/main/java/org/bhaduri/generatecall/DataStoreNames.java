@@ -12,11 +12,11 @@ public class DataStoreNames {
 
     public static final String TICKER_DATA_DETAILS = "/home/sb/Documents/java_testing/EQ_test/";
     public static final String TICKER_DATA_SERIES = "/home/sb/Documents/java_testing/EQ_test_data/";
-    public static final String INPUT_CALL_DATA_PATH = "/home/sb/Documents/java_testing/calls07java.csv";
-    public static final String OUTPUT_CALL_DATA_PATH = "/home/sb/Documents/java_testing/calls07java.csv";
+    public static final String INPUT_CALL_DATA_PATH = "/home/sb/Documents/java_testing/calls08_matlab.csv";
+    public static final String OUTPUT_CALL_DATA_PATH = "/home/sb/Documents/java_testing/calls09java.csv";
 //    public static final String CALL_DATA_PATH = "/home/sb/Documents/java_testing/calls31_matlab.csv";
 //    public static final String CALL_DATA_PATH = "/home/sb/Documents/java_testing/test.csv";
-    public static final String INPUT_PRICE_DATA_PATH = "/home/sb/Documents/java_testing/price06_matlab.csv";
-    public static final String OUTPUT_PRICE_DATA_PATH = "/home/sb/Documents/java_testing/price07java.csv";
+    public static final String INPUT_PRICE_DATA_PATH = "/home/sb/Documents/java_testing/price08_matlab.csv";
+    public static final String OUTPUT_PRICE_DATA_PATH = "/home/sb/Documents/java_testing/price09java.csv";
 
 }
