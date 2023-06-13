@@ -59,7 +59,7 @@ public class ValidateCallDetails {
         String[] delimitedString;
         List<RecordCallPrice> updatedCalls;
         List<RecordCallPrice> updatedPrice;
-        List<RecordCallPrice> inputPriceList = new ArrayList<>();;
+        List<RecordCallPrice> inputPriceList = new ArrayList<>();
         
         CsvTickData lastCsvTickData;
 //        String callOrPrice = "price";
@@ -87,6 +87,13 @@ public class ValidateCallDetails {
             updatedPrice = new ArrayList<>();
             callOrPrice = "price";
             updatedPrice = readCSVCallList(inputPriceDataPath, callOrPrice, scripId);
+            
+            String lastCallOne = updatedCalls.get(updatedCalls.size() - 1).getLastCallVersionOne();
+            String lastCallTwo = updatedCalls.get(updatedCalls.size() - 1).getLastCallVersionTwo();
+            Double lastCallPrice = updatedCalls.get(updatedCalls.size() - 1).getPrice();
+            List<String> lastCalls = new ArrayList<>();
+            lastCalls = validateLastSellCall(updatedPrice, lastCallOne, 
+                    lastCallTwo, lastCallPrice);
 
             lastCsvTickData = new CsvTickData();
             lastCsvTickData = readLastTickerData(scripLast,
@@ -103,6 +110,14 @@ public class ValidateCallDetails {
             updatedPrice.get(updatedPrice.size() - 1).setTallyVersionTwo(tally);
 
             updatedPrice.add(updatedCalls.get(updatedCalls.size()-1));
+            if(lastCalls.get(0).equals("no-sell")){
+               updatedPrice.get(updatedPrice.size()-1).setLastCallVersionOne("no-sell");
+               updatedPrice.get(updatedPrice.size()-1).setTallyVersionOne("");
+            }
+            if(lastCalls.get(1).equals("no-sell")){
+               updatedPrice.get(updatedPrice.size()-1).setLastCallVersionTwo("no-sell");
+               updatedPrice.get(updatedPrice.size()-1).setTallyVersionTwo("");
+            }
             
             inputPriceList.addAll(updatedPrice);
 
@@ -198,7 +213,7 @@ public class ValidateCallDetails {
                 }
             }
         }
-        if (resultTallyData.equals("sell")) {
+        if (resultTallyData.equals("no-sell")) {
             tally = "";
         }
         return tally;
@@ -240,6 +255,8 @@ public class ValidateCallDetails {
                         record.setPriceBrokerageGstOne(Double.valueOf(fields[9]));
                         record.setPriceBrokerageGstTwo(Double.valueOf(fields[10]));
                     } else {
+                        record.setTallyVersionOne("");
+                        record.setTallyVersionTwo("");
                         record.setRetraceVersionOne(Double.valueOf(fields[5]));
                         record.setRetraceVersionTwo(Double.valueOf(fields[6]));
                         record.setPriceBrokerageGstOne(Double.valueOf(fields[7]));
@@ -260,5 +277,85 @@ public class ValidateCallDetails {
         }
 //        System.out.println("recordTest:" + records.get(records.size() - 1).get(1));
         return recordList;
+    }
+    
+    private List<String> validateLastSellCall(List<RecordCallPrice> lastPriceList, String latestCallOne,
+            String latestCallTwo, Double lastCallPrice) {
+        List<String> returnValues = new ArrayList<>();
+        returnValues.add("");
+        returnValues.add("");
+        double buyAccumulated = 0.0;
+        int buyCount = 0;
+        if (latestCallOne.equals("sell")) {
+            for (int ii = lastPriceList.size() - 1; ii >= 0; ii--) {
+                if (lastPriceList.get(ii).getLastCallVersionOne().equals("buy")) {
+                    buyCount = buyCount + 1;
+                    buyAccumulated = buyAccumulated
+                            + lastPriceList.get(ii).getPriceBrokerageGstOne();
+                }
+                if (lastPriceList.get(ii).getLastCallVersionOne().equals("sell")) {
+                    if (buyCount > 0) {
+                        if ((buyAccumulated / buyCount) > lastCallPrice) {
+//                            lastPriceList.get(lastPriceList.size() - 1).setLastCallVersionOne("no-sell");
+//                            lastPriceList.get(lastPriceList.size() - 1).setTallyVersionOne("");
+//                                pricePerScrip.get(pricePerScrip.size() - 1).set(3, "no-sell");
+//                                pricePerScrip.get(pricePerScrip.size() - 1).set(5, "");
+                            returnValues.set(0,"no-sell");
+//                            returnValues.add("");
+                        }
+                    }
+                    break;
+                }
+                if (ii == 0 && !lastPriceList.get(ii).getLastCallVersionOne().equals("sell")
+                        && buyCount > 0) {
+                    if ((buyAccumulated / buyCount) > lastCallPrice) {
+//                        lastPriceList.get(lastPriceList.size() - 1).setLastCallVersionOne("no-sell");
+//                        lastPriceList.get(lastPriceList.size() - 1).setTallyVersionOne("");
+//                                pricePerScrip.get(pricePerScrip.size() - 1).set(3, "no-sell");
+//                                pricePerScrip.get(pricePerScrip.size() - 1).set(5, "");
+                        returnValues.set(0,"no-sell");
+//                        returnValues.add("");
+                    }
+                }
+            }
+        }
+        /////////////////////////////////////////////////////////////////////////////////////////////////////         
+        buyAccumulated = 0.0;
+        buyCount = 0;
+        if (latestCallTwo.equals("sell")) {
+            for (int ii = lastPriceList.size() - 1; ii >= 0; ii--) {
+                if (lastPriceList.get(ii).getLastCallVersionTwo().equals("buy")) {
+                    buyCount = buyCount + 1;
+                    buyAccumulated = buyAccumulated
+                            + lastPriceList.get(ii).getPriceBrokerageGstTwo();
+                }
+                if (lastPriceList.get(ii).getLastCallVersionTwo().equals("sell")) {
+                    if (buyCount > 0) {
+                        if ((buyAccumulated / buyCount) > lastCallPrice) {
+//                            lastPriceList.get(lastPriceList.size() - 1).setLastCallVersionTwo("no-sell");
+//                            lastPriceList.get(lastPriceList.size() - 1).setTallyVersionTwo("");
+//                                pricePerScrip.get(pricePerScrip.size() - 1).set(3, "no-sell");
+//                                pricePerScrip.get(pricePerScrip.size() - 1).set(5, "");
+                            returnValues.set(1,"no-sell");
+//                            returnValues.add("");
+                        }
+                    }
+                    break;
+                }
+                if (ii == 0 && !lastPriceList.get(ii).getLastCallVersionTwo().equals("sell")
+                        && buyCount > 0) {
+                    if ((buyAccumulated / buyCount) > lastCallPrice) {
+//                        lastPriceList.get(lastPriceList.size() - 1).setLastCallVersionTwo("no-sell");
+//                        lastPriceList.get(lastPriceList.size() - 1).setTallyVersionTwo("");
+//                                pricePerScrip.get(pricePerScrip.size() - 1).set(3, "no-sell");
+//                                pricePerScrip.get(pricePerScrip.size() - 1).set(5, "");
+                        returnValues.set(1,"no-sell");
+//                        returnValues.add("");
+                    }
+                }
+            }
+        }
+        return returnValues;
+//########################################################################
     }
 }
