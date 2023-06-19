@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
+import org.bhaduri.datatransfer.DTO.*;
+import org.bhaduri.minutedataaccess.services.MasterDataServices;
 
 public class GenerateCallDetails1 {
 
@@ -60,6 +62,9 @@ public class GenerateCallDetails1 {
 
             CsvTickData recordDataLast = new CsvTickData();
             recordDataLast = readCSVData(scripLast);
+            
+            MasterDataServices masterDataService = new MasterDataServices();
+            recordDataLast = masterDataService.getLastpricerPerScripID(scripLast);
             resultDatas.add(fillResult(recordDataLast.getTickData(), scripId, recordDataLast.getDateTime()));
 /////////// Update existing call list for today's call
             RecordCallPrice callToAdd = new RecordCallPrice();
@@ -174,10 +179,8 @@ public class GenerateCallDetails1 {
             BufferedReader brPrev = new BufferedReader(new FileReader(csvPath));
             line = brPrev.readLine();
             while ((line = brPrev.readLine()) != null) {
-                row = new ArrayList<>();
-                // use comma as separator  
+                row = new ArrayList<>();  
                 fields = line.split(",");
-                //fields will now contain all values    
                 row.add(index);
                 row.add(Double.valueOf(fields[3]));
                 

@@ -8,6 +8,7 @@ package org.bhaduri.validatecall;
 // *
 // * @author sb
 // */
+import org.bhaduri.datatransfer.DTO.*;;
 import org.bhaduri.generatecall.*;
 import java.io.IOException;
 import java.io.BufferedReader;
