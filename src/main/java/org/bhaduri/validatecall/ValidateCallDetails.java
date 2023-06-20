@@ -10,6 +10,7 @@ package org.bhaduri.validatecall;
 // */
 import org.bhaduri.datatransfer.DTO.*;;
 import org.bhaduri.generatecall.*;
+import org.bhaduri.minutedataaccess.services.MasterDataServices;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.File;
@@ -97,8 +98,17 @@ public class ValidateCallDetails {
                     lastCallTwo, lastCallPrice);
 
             lastCsvTickData = new CsvTickData();
-            lastCsvTickData = readLastTickerData(scripLast,
-                    updatedCalls.get(updatedCalls.size() - 2).getLastUpdateTime());
+//            lastCsvTickData = readLastTickerData(scripLast,
+//                    updatedCalls.get(updatedCalls.size() - 2).getLastUpdateTime());
+            MasterDataServices masterDataService = new MasterDataServices();
+            DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            try {
+                Date lastupdateDate = targetFormat.parse(updatedCalls.get(updatedCalls.size() - 2).getLastUpdateTime());
+                lastCsvTickData = masterDataService.getLatestDataScripID(scripId, lastupdateDate);
+            } catch (ParseException ex) {
+                System.out.println(ex + " has occurred for ParseException.");
+            }
+            
             
             String tally = "";
             tally = fillTally(updatedPrice.get(updatedPrice.size() - 1).getLastCallVersionOne(), lastCsvTickData.getTickData(),

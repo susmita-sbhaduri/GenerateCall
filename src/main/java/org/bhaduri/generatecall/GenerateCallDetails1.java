@@ -61,10 +61,11 @@ public class GenerateCallDetails1 {
             String scripId = delimitedString[6];//to be fixed
 
             CsvTickData recordDataLast = new CsvTickData();
-            recordDataLast = readCSVData(scripLast);
+//            recordDataLast = readCSVData(scripLast);
             
             MasterDataServices masterDataService = new MasterDataServices();
-            recordDataLast = masterDataService.getLastpricerPerScripID(scripLast);
+            recordDataLast = masterDataService.getLastpricerPerScripID(scripId);
+            
             resultDatas.add(fillResult(recordDataLast.getTickData(), scripId, recordDataLast.getDateTime()));
 /////////// Update existing call list for today's call
             RecordCallPrice callToAdd = new RecordCallPrice();
