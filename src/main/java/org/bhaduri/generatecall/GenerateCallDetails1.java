@@ -35,6 +35,8 @@ public class GenerateCallDetails1 {
         Collections.sort(listFileArray); //directories are sorted as per their name
         int dirCount = listFileArray.size();
         String titleExist;
+        MasterDataServices masterDataService = new MasterDataServices();
+        
         List<RecordCallPrice> recordCalls = new ArrayList<>();
         titleExist = "yes";
         recordCalls = readCSVCallList(DataStoreNames.INPUT_CALL_DATA_PATH, titleExist);
@@ -63,7 +65,7 @@ public class GenerateCallDetails1 {
             CsvTickData recordDataLast = new CsvTickData();
 //            recordDataLast = readCSVData(scripLast);
             
-            MasterDataServices masterDataService = new MasterDataServices();
+            
             recordDataLast = masterDataService.getLastpricerPerScripID(scripId);
             
             resultDatas.add(fillResult(recordDataLast.getTickData(), scripId, recordDataLast.getDateTime()));
@@ -81,8 +83,9 @@ public class GenerateCallDetails1 {
             callToAdd.setRetraceVersionTwo(resultDatas.get(resultDatas.size() - 1).getRetraceVersionTwo());
             callToAdd.setPriceBrokerageGstOne(resultDatas.get(resultDatas.size() - 1).getPriceBrokerageGstOne());
             callToAdd.setPriceBrokerageGstTwo(resultDatas.get(resultDatas.size() - 1).getPriceBrokerageGstTwo());
-
-            recordCalls.add(callToAdd);
+            
+            masterDataService.insertIntoCalltable(callToAdd);
+//            recordCalls.add(callToAdd);
 
 /////////// Update existing call list for today's call
             System.out.println("Done in scrip loop");
