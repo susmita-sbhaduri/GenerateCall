@@ -84,11 +84,11 @@ public class ValidateCallDetails {
             
             updatedCalls = new ArrayList<>();
             callOrPrice = "call";
-            updatedCalls = readCSVCallList(updatedCallDataPath, callOrPrice, scripId);
+//            updatedCalls = readCSVCallList(updatedCallDataPath, callOrPrice, scripId);
 
             updatedPrice = new ArrayList<>();
             callOrPrice = "price";
-            updatedPrice = readCSVCallList(inputPriceDataPath, callOrPrice, scripId);
+//            updatedPrice = readCSVCallList(inputPriceDataPath, callOrPrice, scripId);
             
             String lastCallOne = updatedCalls.get(updatedCalls.size() - 1).getLastCallVersionOne();
             String lastCallTwo = updatedCalls.get(updatedCalls.size() - 1).getLastCallVersionTwo();
@@ -101,13 +101,14 @@ public class ValidateCallDetails {
 //            lastCsvTickData = readLastTickerData(scripLast,
 //                    updatedCalls.get(updatedCalls.size() - 2).getLastUpdateTime());
             MasterDataServices masterDataService = new MasterDataServices();
-            DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-            try {
-                Date lastupdateDate = targetFormat.parse(updatedCalls.get(updatedCalls.size() - 2).getLastUpdateTime());
-                lastCsvTickData = masterDataService.getLatestDataScripID(scripId, lastupdateDate);
-            } catch (ParseException ex) {
-                System.out.println(ex + " has occurred for ParseException.");
-            }
+            lastCsvTickData = masterDataService.getLatestDataScripID(scripId, updatedCalls.get(updatedCalls.size() - 2).getLastUpdateTime());
+//            DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+//            try {
+//                Date lastupdateDate = targetFormat.parse(updatedCalls.get(updatedCalls.size() - 2).getLastUpdateTime());
+//                lastCsvTickData = masterDataService.getLatestDataScripID(scripId, lastupdateDate);
+//            } catch (ParseException ex) {
+//                System.out.println(ex + " has occurred for ParseException.");
+//            }
             
             
             String tally = "";
@@ -136,7 +137,7 @@ public class ValidateCallDetails {
         
         String priceHeading = "EQ,Date,Price,CallOne,CallTwo,TallyOne,TallyTwo,RetraceOne,RetraceTwo,"
                 + "PriceGSTOne,PriceGSTTwo";
-        Collections.sort(inputPriceList , new SortCallList());
+//        Collections.sort(inputPriceList , new SortCallList());
         PrintMatrix printMatrix = new PrintMatrix();
         String typeToPrint = "price";
         printMatrix.printResultData(inputPriceList, outputPriceDataPath, 
@@ -230,65 +231,65 @@ public class ValidateCallDetails {
         return tally;
     }
     
-    private List<RecordCallPrice> readCSVCallList(String csvPath, String callOrPrice, String scripID) {
-        String line;
-        int flag = 0;
-        List<RecordCallPrice> recordList = new ArrayList<>();
-        RecordCallPrice record = new RecordCallPrice();
-        try {
-            BufferedReader brPrev = new BufferedReader(new FileReader(csvPath));
-            line = brPrev.readLine();
-            flag = 1;
-            while ((line = brPrev.readLine()) != null) {
-                // use comma as separator  
-                String[] fields = line.split(",");
-                if (fields[0].equals(scripID)) {
-                    record.setScripID(fields[0]);
-
-                    DateFormat originalFormat = new SimpleDateFormat("MMM-dd-yyyy", Locale.ENGLISH);
-                    DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-                    try {
-                        Date date = originalFormat.parse(fields[1]);
-                        String formattedDate = targetFormat.format(date);
-                        record.setLastUpdateTime(formattedDate);
-                    } catch (ParseException ex) {
-                        record.setLastUpdateTime(fields[1]);
-                    }
-//                    record.setLastUpdateTime(fields[1]);
-                    record.setPrice(Double.valueOf(fields[2]));
-                    record.setLastCallVersionOne(fields[3]);
-                    record.setLastCallVersionTwo(fields[4]);
-                    if (callOrPrice.equals("price")) {
-                        record.setTallyVersionOne(fields[5]);
-                        record.setTallyVersionTwo(fields[6]);
-                        record.setRetraceVersionOne(Double.valueOf(fields[7]));
-                        record.setRetraceVersionTwo(Double.valueOf(fields[8]));
-                        record.setPriceBrokerageGstOne(Double.valueOf(fields[9]));
-                        record.setPriceBrokerageGstTwo(Double.valueOf(fields[10]));
-                    } else {
-                        record.setTallyVersionOne("");
-                        record.setTallyVersionTwo("");
-                        record.setRetraceVersionOne(Double.valueOf(fields[5]));
-                        record.setRetraceVersionTwo(Double.valueOf(fields[6]));
-                        record.setPriceBrokerageGstOne(Double.valueOf(fields[7]));
-                        record.setPriceBrokerageGstTwo(Double.valueOf(fields[8]));
-                    }
-                    //fields will now contain all values    
-                    recordList.add(record);
-                    record = new RecordCallPrice();
-                    flag = 2;
-                }
-                if (flag == 2 && (fields[0].equals(scripID) == false)) {
-                    break;
-                }
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-//                Logger.getLogger(PerMinuteResposeOfNSE.class.getName()).log(Level.SEVERE, null, ex);
-        }
-//        System.out.println("recordTest:" + records.get(records.size() - 1).get(1));
-        return recordList;
-    }
+//    private List<RecordCallPrice> readCSVCallList(String csvPath, String callOrPrice, String scripID) {
+//        String line;
+//        int flag = 0;
+//        List<RecordCallPrice> recordList = new ArrayList<>();
+//        RecordCallPrice record = new RecordCallPrice();
+//        try {
+//            BufferedReader brPrev = new BufferedReader(new FileReader(csvPath));
+//            line = brPrev.readLine();
+//            flag = 1;
+//            while ((line = brPrev.readLine()) != null) {
+//                // use comma as separator  
+//                String[] fields = line.split(",");
+//                if (fields[0].equals(scripID)) {
+//                    record.setScripID(fields[0]);
+//
+//                    DateFormat originalFormat = new SimpleDateFormat("MMM-dd-yyyy", Locale.ENGLISH);
+//                    DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+//                    try {
+//                        Date date = originalFormat.parse(fields[1]);
+//                        String formattedDate = targetFormat.format(date);
+//                        record.setLastUpdateTime(formattedDate);
+//                    } catch (ParseException ex) {
+//                        record.setLastUpdateTime(fields[1]);
+//                    }
+////                    record.setLastUpdateTime(fields[1]);
+//                    record.setPrice(Double.valueOf(fields[2]));
+//                    record.setLastCallVersionOne(fields[3]);
+//                    record.setLastCallVersionTwo(fields[4]);
+//                    if (callOrPrice.equals("price")) {
+//                        record.setTallyVersionOne(fields[5]);
+//                        record.setTallyVersionTwo(fields[6]);
+//                        record.setRetraceVersionOne(Double.valueOf(fields[7]));
+//                        record.setRetraceVersionTwo(Double.valueOf(fields[8]));
+//                        record.setPriceBrokerageGstOne(Double.valueOf(fields[9]));
+//                        record.setPriceBrokerageGstTwo(Double.valueOf(fields[10]));
+//                    } else {
+//                        record.setTallyVersionOne("");
+//                        record.setTallyVersionTwo("");
+//                        record.setRetraceVersionOne(Double.valueOf(fields[5]));
+//                        record.setRetraceVersionTwo(Double.valueOf(fields[6]));
+//                        record.setPriceBrokerageGstOne(Double.valueOf(fields[7]));
+//                        record.setPriceBrokerageGstTwo(Double.valueOf(fields[8]));
+//                    }
+//                    //fields will now contain all values    
+//                    recordList.add(record);
+//                    record = new RecordCallPrice();
+//                    flag = 2;
+//                }
+//                if (flag == 2 && (fields[0].equals(scripID) == false)) {
+//                    break;
+//                }
+//            }
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+////                Logger.getLogger(PerMinuteResposeOfNSE.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+////        System.out.println("recordTest:" + records.get(records.size() - 1).get(1));
+//        return recordList;
+//    }
     
     private List<String> validateLastSellCall(List<RecordCallPrice> lastPriceList, String latestCallOne,
             String latestCallTwo, Double lastCallPrice) {

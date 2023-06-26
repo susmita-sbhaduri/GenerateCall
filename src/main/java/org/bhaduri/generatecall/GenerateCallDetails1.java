@@ -38,8 +38,8 @@ public class GenerateCallDetails1 {
         MasterDataServices masterDataService = new MasterDataServices();
         
         List<RecordCallPrice> recordCalls = new ArrayList<>();
-        titleExist = "yes";
-        recordCalls = readCSVCallList(DataStoreNames.INPUT_CALL_DATA_PATH, titleExist);
+//        titleExist = "yes";
+//        recordCalls = readCSVCallList(DataStoreNames.INPUT_CALL_DATA_PATH, titleExist);
         titleExist = "no";
 
         String scripFolderPath = "";
@@ -94,10 +94,10 @@ public class GenerateCallDetails1 {
 
         String priceHeading = "EQ,Date,Price,CallOne,CallTwo,RetraceOne,RetraceTwo,"
                 + "PriceGSTOne,PriceGSTTwo";
-
+        recordCalls = masterDataService.readSortCallList();
         String printFile = DataStoreNames.OUTPUT_CALL_DATA_PATH;
         String callOrPrice = "call";
-        Collections.sort(recordCalls , new SortCallList());
+//        Collections.sort(recordCalls , new SortCallList());
         PrintMatrix printMatrix = new PrintMatrix();
         printMatrix.printResultData(recordCalls, printFile, priceHeading, callOrPrice);
         System.out.println("Done");
@@ -127,80 +127,80 @@ public class GenerateCallDetails1 {
         return records;
     }
 
-    private List<RecordCallPrice> readCSVCallList(String csvPath, String titleFlag) {
-        String line;
-        List<RecordCallPrice> recordList = new ArrayList<>();
-        RecordCallPrice record = new RecordCallPrice();
-        try {
-            BufferedReader brPrev = new BufferedReader(new FileReader(csvPath));
-            if (titleFlag.equals("yes")) {
-                line = brPrev.readLine();
-            }
-            while ((line = brPrev.readLine()) != null) {
-                // use comma as separator  
-                String[] fields = line.split(",");
-                record.setScripID(fields[0]);
-//                record.setLastUpdateTime(fields[1]);
-                DateFormat originalFormat = new SimpleDateFormat("MMM-dd-yyyy", Locale.ENGLISH);
-                DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-                try {
-                    Date date = originalFormat.parse(fields[1]);
-                    String formattedDate = targetFormat.format(date);
-                    record.setLastUpdateTime(formattedDate);
-                } catch (ParseException ex) {
-                    record.setLastUpdateTime(fields[1]);
-                }
-                record.setPrice(Double.valueOf(fields[2]));
-                record.setLastCallVersionOne(fields[3]);
-                record.setLastCallVersionTwo(fields[4]);
-//                record.setTallyVersionOne(fields[5]);
-//                record.setTallyVersionTwo(fields[6]);
-                record.setRetraceVersionOne(Double.valueOf(fields[5]));
-                record.setRetraceVersionTwo(Double.valueOf(fields[6]));
-                record.setPriceBrokerageGstOne(Double.valueOf(fields[7]));
-                record.setPriceBrokerageGstTwo(Double.valueOf(fields[8]));
+//    private List<RecordCallPrice> readCSVCallList(String csvPath, String titleFlag) {
+//        String line;
+//        List<RecordCallPrice> recordList = new ArrayList<>();
+//        RecordCallPrice record = new RecordCallPrice();
+//        try {
+//            BufferedReader brPrev = new BufferedReader(new FileReader(csvPath));
+//            if (titleFlag.equals("yes")) {
+//                line = brPrev.readLine();
+//            }
+//            while ((line = brPrev.readLine()) != null) {
+//                // use comma as separator  
+//                String[] fields = line.split(",");
+//                record.setScripID(fields[0]);
+////                record.setLastUpdateTime(fields[1]);
+//                DateFormat originalFormat = new SimpleDateFormat("MMM-dd-yyyy", Locale.ENGLISH);
+//                DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+//                try {
+//                    Date date = originalFormat.parse(fields[1]);
+//                    String formattedDate = targetFormat.format(date);
+//                    record.setLastUpdateTime(formattedDate);
+//                } catch (ParseException ex) {
+//                    record.setLastUpdateTime(fields[1]);
+//                }
+//                record.setPrice(Double.valueOf(fields[2]));
+//                record.setLastCallVersionOne(fields[3]);
+//                record.setLastCallVersionTwo(fields[4]);
+////                record.setTallyVersionOne(fields[5]);
+////                record.setTallyVersionTwo(fields[6]);
+//                record.setRetraceVersionOne(Double.valueOf(fields[5]));
+//                record.setRetraceVersionTwo(Double.valueOf(fields[6]));
+//                record.setPriceBrokerageGstOne(Double.valueOf(fields[7]));
+//                record.setPriceBrokerageGstTwo(Double.valueOf(fields[8]));
+//
+//                //fields will now contain all values    
+//                recordList.add(record);
+//                record = new RecordCallPrice();
+//            }
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+////                Logger.getLogger(PerMinuteResposeOfNSE.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+////        System.out.println("recordTest:" + records.get(records.size() - 1).get(1));
+//        return recordList;
+//    }
 
-                //fields will now contain all values    
-                recordList.add(record);
-                record = new RecordCallPrice();
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-//                Logger.getLogger(PerMinuteResposeOfNSE.class.getName()).log(Level.SEVERE, null, ex);
-        }
-//        System.out.println("recordTest:" + records.get(records.size() - 1).get(1));
-        return recordList;
-    }
+//    private CsvTickData readCSVData(String csvPath) {
+//        CsvTickData retCsvTickData = new CsvTickData();
+//        String line;
+//        double index = 1;
+//        List<List<Double>> recordData = new ArrayList<>();
+//        List<Double> row = new ArrayList<>();
+//        String[] fields = null;
+//        try {
+//            BufferedReader brPrev = new BufferedReader(new FileReader(csvPath));
+//            line = brPrev.readLine();
+//            while ((line = brPrev.readLine()) != null) {
+//                row = new ArrayList<>();  
+//                fields = line.split(",");
+//                row.add(index);
+//                row.add(Double.valueOf(fields[3]));
+//                
+//                recordData.add(row);                
+//                index = index+1;
+//            }
+//            retCsvTickData.setTickData(recordData);  
+//            retCsvTickData.setDateTime(fields[1]);
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+////                Logger.getLogger(PerMinuteResposeOfNSE.class.getName()).log(Level.SEVERE, null, ex);
+//        }       
+//        return retCsvTickData;
+//    }
 
-    private CsvTickData readCSVData(String csvPath) {
-        CsvTickData retCsvTickData = new CsvTickData();
-        String line;
-        double index = 1;
-        List<List<Double>> recordData = new ArrayList<>();
-        List<Double> row = new ArrayList<>();
-        String[] fields = null;
-        try {
-            BufferedReader brPrev = new BufferedReader(new FileReader(csvPath));
-            line = brPrev.readLine();
-            while ((line = brPrev.readLine()) != null) {
-                row = new ArrayList<>();  
-                fields = line.split(",");
-                row.add(index);
-                row.add(Double.valueOf(fields[3]));
-                
-                recordData.add(row);                
-                index = index+1;
-            }
-            retCsvTickData.setTickData(recordData);  
-            retCsvTickData.setDateTime(fields[1]);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-//                Logger.getLogger(PerMinuteResposeOfNSE.class.getName()).log(Level.SEVERE, null, ex);
-        }       
-        return retCsvTickData;
-    }
-
-    private ResultData fillResult(List<List<Double>> recordData, String scripId, String lastUpdateDate) {
+    private ResultData fillResult(List<List<Double>> recordData, String scripId, Date lastUpdateDate) {
 
         int callCount = 3;
         Smoothing smoothing = new Smoothing(recordData, callCount);
