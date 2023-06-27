@@ -36,6 +36,8 @@ public class GenerateCallDetails1 {
         int dirCount = listFileArray.size();
         String titleExist;
         MasterDataServices masterDataService = new MasterDataServices();
+        List<String> scripIDList = new ArrayList<>();
+        scripIDList = masterDataService.readScripData();
         
         List<RecordCallPrice> recordCalls = new ArrayList<>();
 //        titleExist = "yes";
@@ -92,21 +94,52 @@ public class GenerateCallDetails1 {
         }
 
 
-        String priceHeading = "EQ,Date,Price,CallOne,CallTwo,RetraceOne,RetraceTwo,"
-                + "PriceGSTOne,PriceGSTTwo";
+        
         recordCalls = masterDataService.readSortCallList();
-        String printFile = DataStoreNames.OUTPUT_CALL_DATA_PATH;
-        String callOrPrice = "call";
+        printCallList(recordCalls);
+        
 //        Collections.sort(recordCalls , new SortCallList());
-        PrintMatrix printMatrix = new PrintMatrix();
-        printMatrix.printResultData(recordCalls, printFile, priceHeading, callOrPrice);
-        System.out.println("Done");
+        
         ////////////////////////////////////////////////////////////////////////
 
     }
 
-//    
+    private void printCallList(List<RecordCallPrice> callListFromDbase) {
+        String priceHeading = "EQ,Date,Price,CallOne,CallTwo,RetraceOne,RetraceTwo,"
+                + "PriceGSTOne,PriceGSTTwo";
+        Double thresHold;
+        for (int i = 0; i < callListFromDbase.size(); i++) {
+            thresHold = (0.5 / 100) * (callListFromDbase.get(i).getPrice())
+                    + ((0.5 / 100) * callListFromDbase.get(i).getPrice()) * 18 / 100;
+            if (callListFromDbase.get(i).getLastCallVersionOne().equals("buy")) {
+                callListFromDbase.get(i).setPriceBrokerageGstOne(callListFromDbase.get(i).getPrice() + thresHold);
+            } else {
+                if (callListFromDbase.get(i).getLastCallVersionOne().equals("sell")) {
+                    callListFromDbase.get(i).setPriceBrokerageGstOne(callListFromDbase.get(i).getPrice() - thresHold);
+                } else {
+                    callListFromDbase.get(i).setPriceBrokerageGstOne(callListFromDbase.get(i).getPrice());
+                }
+            }
+            
+            if (callListFromDbase.get(i).getLastCallVersionTwo().equals("buy")) {
+                callListFromDbase.get(i).setPriceBrokerageGstTwo(callListFromDbase.get(i).getPrice() + thresHold);
+            } else {
+                if (callListFromDbase.get(i).getLastCallVersionTwo().equals("sell")) {
+                    callListFromDbase.get(i).setPriceBrokerageGstTwo(callListFromDbase.get(i).getPrice() - thresHold);
+                } else {
+                    callListFromDbase.get(i).setPriceBrokerageGstTwo(callListFromDbase.get(i).getPrice());
+                }
+            }      
 
+        }
+        String printFile = DataStoreNames.OUTPUT_CALL_DATA_PATH;
+        String callOrPrice = "call";
+        PrintMatrix printMatrix = new PrintMatrix();
+        printMatrix.printResultData(callListFromDbase, printFile, priceHeading, callOrPrice);
+        System.out.println("Done");
+        
+    }
+    
     private List<List<String>> readCSV(String csvPath) {
         String line;
         List<List<String>> records = new ArrayList<>();
