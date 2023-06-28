@@ -57,6 +57,10 @@ public class ValidateCallDetails {
         Collections.sort(listFileArray); //directories are sorted as per their name
         int dirCount = listFileArray.size();
         
+        List<String> scripIDList = new ArrayList<>();
+        MasterDataServices masterDataService = new MasterDataServices();
+        scripIDList = masterDataService.readScripData();
+        
         String scripFolderPath = "";
         String[] delimitedString;
         List<RecordCallPrice> updatedCalls;
@@ -70,7 +74,7 @@ public class ValidateCallDetails {
         String scripId;
 //        inputPriceList = readCSVCallList(inputPriceDataPath, callOrPrice, scripId);
         
-        for (int i = 0; i < dirCount; i++) {
+        for (int i = 0; i < scripIDList.size(); i++) {
             scripFolderPath = latestTickDataPath.concat(listFileArray.get(i).toString());
             scripFolderPath = scripFolderPath.concat("/");
             File fileListPerScrip = new File(scripFolderPath);
@@ -80,11 +84,12 @@ public class ValidateCallDetails {
 
             String scripLast = arrayPerScrip[fileCount - 1].getAbsolutePath();
             delimitedString = scripFolderPath.split("/");
-            scripId = delimitedString[6];//to be fixed
+//            scripId = delimitedString[6];//to be fixed
+            scripId = scripIDList.get(i);
             
             updatedCalls = new ArrayList<>();
             callOrPrice = "call";
-//            updatedCalls = readCSVCallList(updatedCallDataPath, callOrPrice, scripId);
+            updatedCalls = masterDataService.readSortCallList();
 
             updatedPrice = new ArrayList<>();
             callOrPrice = "price";

@@ -49,7 +49,7 @@ public class GenerateCallDetails1 {
         List<ResultData> resultDatas = new ArrayList<ResultData>(); // call list for the last and 
 //        previous days file using elliot curve algo
 
-        for (int i = 0; i < dirCount; i++) {
+        for (int i = 0; i < scripIDList.size(); i++) {
             scripFolderPath = DataStoreNames.TICKER_DATA_DETAILS.concat(listFileArray.get(i).toString());
             scripFolderPath = scripFolderPath.concat("/");
             File fileListPerScrip = new File(scripFolderPath);
@@ -62,7 +62,8 @@ public class GenerateCallDetails1 {
             System.out.println("scripid" + listFileArray.get(i));
 
             delimitedString = scripFolderPath.split("/");
-            String scripId = delimitedString[6];//to be fixed
+//            String scripId = delimitedString[6];//to be fixed
+            String scripId = scripIDList.get(i);
 
             CsvTickData recordDataLast = new CsvTickData();
 //            recordDataLast = readCSVData(scripLast);
