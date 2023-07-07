@@ -140,6 +140,30 @@ public class PrintMatrix {
         } catch (IOException ex) {
             Logger.getLogger(PrintMatrix.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+    }
+    
+    public void printMinuteData(List<RecordMinute> dataToPrint, String printFile, String titleString) {
+        try {
+            File output = new File(printFile);
+            output.createNewFile();
+            PrintStream write = new PrintStream(output);
+            write.print(titleString);
+                write.println();
+            for (int i = 0; i < dataToPrint.size(); i++) {                
+                write.print(dataToPrint.get(i).getScripID()
+                +","+dataToPrint.get(i).getLastUpdateTime()
+                +","+dataToPrint.get(i).getOpenprice()
+                +","+dataToPrint.get(i).getDaylastprice()
+                +","+dataToPrint.get(i).getDayhighprice()
+                +","+dataToPrint.get(i).getDaylowprice()
+                +","+dataToPrint.get(i).getPrevcloseprice()
+                +","+dataToPrint.get(i).getTotaltradedvolume()
+                );
+                write.println();
+            }
+            write.close();
+        } catch (IOException ex) {
+            Logger.getLogger(PrintMatrix.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

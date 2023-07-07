@@ -94,7 +94,9 @@ public class ValidateCallDetails {
                     System.out.println("Buy price is not satisfied w.r.t selected Sell call for this scripid=" + inputScripID);
                 }
                 else{
-                    
+                    String titleString = "scripid,lastupdateminute,openprice,daylastprice,dayhighprice,daylowprice,prevcloseprice,totaltradedvolume";
+                    PrintMatrix printMatrix = new PrintMatrix();
+                    printMatrix.printMinuteData(minuteDataValid, "/home/sb/Documents/java_testing/valid"+inputScripID+".csv", titleString);
                 }
                 
             }
