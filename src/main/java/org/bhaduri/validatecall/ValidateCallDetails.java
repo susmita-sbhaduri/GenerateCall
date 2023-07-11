@@ -48,14 +48,14 @@ public class ValidateCallDetails {
         List<RecordCallPrice> updatedCalls;
         List<RecordCallPrice> reverseCallList = null;
         updatedCalls = masterDataService.callListPerScrip(inputScripID);
-        int i = 40; //user input
+        int i = 55; //user input
         if(updatedCalls.get(i).getLastCallVersionTwo().equals("buy")){
             reverseCallList = masterDataService.listReverseCalls(inputScripID, updatedCalls.get(i).getLastUpdateTime(), "sell");
             if(reverseCallList.isEmpty()){
                 System.out.println("No previous Sell call for this scripid" + inputScripID);
             }
             else {
-                printCallList(reverseCallList);
+//                printCallList(reverseCallList);
             }
         }
         if(updatedCalls.get(i).getLastCallVersionTwo().equals("sell")){
@@ -64,28 +64,29 @@ public class ValidateCallDetails {
                 System.out.println("No previous Buy call for this scripid" + inputScripID);
             }
             else {
-                printCallList(reverseCallList);
+//                printCallList(reverseCallList);
             }
         }
         if(updatedCalls.get(i).getLastCallVersionTwo().equals("buy")){
-            int ii = 10; //user input
-            List<RecordMinute> minuteDataForRange;
-            List<RecordMinute> minuteDataValid = null;
+            int ii = 17; //user input
+            List<RecordMinute> minuteDataForRange = new ArrayList<>();
+            List<RecordMinute> minuteDataValid = new ArrayList<>();;
             RecordMinute record = new RecordMinute();
             if(reverseCallList.isEmpty()==false){
                 minuteDataForRange = masterDataService.getMindataForRange(inputScripID,
                         reverseCallList.get(ii).getLastUpdateTime(), updatedCalls.get(i).getLastUpdateTime());
                 Double sellPrice = reverseCallList.get(ii).getPrice();
+                
                 for (int k = 0; k < minuteDataForRange.size(); k++) {
                     if (minuteDataForRange.get(k).getDaylastprice() < sellPrice) {
-                        record.setScripID(minuteDataForRange.get(i).getScripID());
-                        record.setLastUpdateTime(minuteDataForRange.get(i).getLastUpdateTime());
-                        record.setOpenprice(minuteDataForRange.get(i).getOpenprice());
-                        record.setDaylastprice(minuteDataForRange.get(i).getDaylastprice());
-                        record.setDayhighprice(minuteDataForRange.get(i).getDayhighprice());
-                        record.setDaylowprice(minuteDataForRange.get(i).getDaylowprice());
-                        record.setPrevcloseprice(minuteDataForRange.get(i).getPrevcloseprice());
-                        record.setTotaltradedvolume(minuteDataForRange.get(i).getTotaltradedvolume());
+                        record.setScripID(minuteDataForRange.get(k).getScripID());
+                        record.setLastUpdateTime(minuteDataForRange.get(k).getLastUpdateTime());
+                        record.setOpenprice(minuteDataForRange.get(k).getOpenprice());
+                        record.setDaylastprice(minuteDataForRange.get(k).getDaylastprice());
+                        record.setDayhighprice(minuteDataForRange.get(k).getDayhighprice());
+                        record.setDaylowprice(minuteDataForRange.get(k).getDaylowprice());
+                        record.setPrevcloseprice(minuteDataForRange.get(k).getPrevcloseprice());
+                        record.setTotaltradedvolume(minuteDataForRange.get(k).getTotaltradedvolume());
                         minuteDataValid.add(record);
                         record = new RecordMinute();
                     }
@@ -96,43 +97,45 @@ public class ValidateCallDetails {
                 else{
                     String titleString = "scripid,lastupdateminute,openprice,daylastprice,dayhighprice,daylowprice,prevcloseprice,totaltradedvolume";
                     PrintMatrix printMatrix = new PrintMatrix();
-                    printMatrix.printMinuteData(minuteDataValid, "/home/sb/Documents/java_testing/valid"+inputScripID+".csv", titleString);
-                }
-                
-            }
-             
+                    printMatrix.printMinuteData(minuteDataValid, "/home/sb/Documents/java_testing/valid_buy_"+inputScripID+".csv", titleString);
+                }                
+            }             
         }
         
         if(updatedCalls.get(i).getLastCallVersionTwo().equals("sell")){
             int ii = 10; //user input
-            List<RecordMinute> minuteDataForRange;
-            List<RecordMinute> minuteDataValid = null;
+            List<RecordMinute> minuteDataForRange = new ArrayList<>();
+            List<RecordMinute> minuteDataValid = new ArrayList<>();;
             RecordMinute record = new RecordMinute();
             if(reverseCallList.isEmpty()==false){
                 minuteDataForRange = masterDataService.getMindataForRange(inputScripID,
                         reverseCallList.get(ii).getLastUpdateTime(), updatedCalls.get(i).getLastUpdateTime());
                 Double buyPrice = reverseCallList.get(ii).getPrice();
+                
                 for (int k = 0; k < minuteDataForRange.size(); k++) {
                     if (minuteDataForRange.get(k).getDaylastprice() > buyPrice) {
-                        record.setScripID(minuteDataForRange.get(i).getScripID());
-                        record.setLastUpdateTime(minuteDataForRange.get(i).getLastUpdateTime());
-                        record.setOpenprice(minuteDataForRange.get(i).getOpenprice());
-                        record.setDaylastprice(minuteDataForRange.get(i).getDaylastprice());
-                        record.setDayhighprice(minuteDataForRange.get(i).getDayhighprice());
-                        record.setDaylowprice(minuteDataForRange.get(i).getDaylowprice());
-                        record.setPrevcloseprice(minuteDataForRange.get(i).getPrevcloseprice());
-                        record.setTotaltradedvolume(minuteDataForRange.get(i).getTotaltradedvolume());
+                        record.setScripID(minuteDataForRange.get(k).getScripID());
+                        record.setLastUpdateTime(minuteDataForRange.get(k).getLastUpdateTime());
+                        record.setOpenprice(minuteDataForRange.get(k).getOpenprice());
+                        record.setDaylastprice(minuteDataForRange.get(k).getDaylastprice());
+                        record.setDayhighprice(minuteDataForRange.get(k).getDayhighprice());
+                        record.setDaylowprice(minuteDataForRange.get(k).getDaylowprice());
+                        record.setPrevcloseprice(minuteDataForRange.get(k).getPrevcloseprice());
+                        record.setTotaltradedvolume(minuteDataForRange.get(k).getTotaltradedvolume());
                         minuteDataValid.add(record);
                         record = new RecordMinute();
                     }
                 }
-                
-            }
-             
+                if(minuteDataValid.size()==0){
+                    System.out.println("Buy price is not satisfied w.r.t selected Buy call for this scripid=" + inputScripID);
+                }
+                else{
+                    String titleString = "scripid,lastupdateminute,openprice,daylastprice,dayhighprice,daylowprice,prevcloseprice,totaltradedvolume";
+                    PrintMatrix printMatrix = new PrintMatrix();
+                    printMatrix.printMinuteData(minuteDataValid, "/home/sb/Documents/java_testing/valid_sell_"+inputScripID+".csv", titleString);
+                }
+            }             
         }
-        
-        
-        
         List<RecordCallPrice> inputPriceList = new ArrayList<>();
         
         CsvTickData lastCsvTickData;
