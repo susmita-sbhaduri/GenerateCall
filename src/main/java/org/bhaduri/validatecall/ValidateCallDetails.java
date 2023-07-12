@@ -48,7 +48,7 @@ public class ValidateCallDetails {
         List<RecordCallPrice> updatedCalls;
         List<RecordCallPrice> reverseCallList = null;
         updatedCalls = masterDataService.callListPerScrip(inputScripID);
-        int i = 55; //user input
+        int i = 286; //user input
         if(updatedCalls.get(i).getLastCallVersionTwo().equals("buy")){
             reverseCallList = masterDataService.listReverseCalls(inputScripID, updatedCalls.get(i).getLastUpdateTime(), "sell");
             if(reverseCallList.isEmpty()){
@@ -103,7 +103,7 @@ public class ValidateCallDetails {
         }
         
         if(updatedCalls.get(i).getLastCallVersionTwo().equals("sell")){
-            int ii = 10; //user input
+            int ii = 149; //user input
             List<RecordMinute> minuteDataForRange = new ArrayList<>();
             List<RecordMinute> minuteDataValid = new ArrayList<>();;
             RecordMinute record = new RecordMinute();

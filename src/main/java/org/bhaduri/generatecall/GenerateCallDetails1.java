@@ -30,10 +30,6 @@ public class GenerateCallDetails1 {
     public void getFileList() {
         
 
-        File directory = new File(DataStoreNames.TICKER_DATA_DETAILS);
-        List listFileArray = Arrays.asList(directory.list());
-        Collections.sort(listFileArray); //directories are sorted as per their name
-        int dirCount = listFileArray.size();
         String titleExist;
         MasterDataServices masterDataService = new MasterDataServices();
         List<String> scripIDList = new ArrayList<>();
@@ -50,24 +46,9 @@ public class GenerateCallDetails1 {
 //        previous days file using elliot curve algo
 
         for (int i = 0; i < scripIDList.size(); i++) {
-            scripFolderPath = DataStoreNames.TICKER_DATA_DETAILS.concat(listFileArray.get(i).toString());
-            scripFolderPath = scripFolderPath.concat("/");
-            File fileListPerScrip = new File(scripFolderPath);
-            File[] arrayPerScrip = fileListPerScrip.listFiles();
-            int fileCount = arrayPerScrip.length;
-            Arrays.sort(arrayPerScrip, LASTMODIFIED_COMPARATOR);
+             String scripId = scripIDList.get(i);
 
-            String scripLast = arrayPerScrip[fileCount - 1].getAbsolutePath();
-
-            System.out.println("scripid" + listFileArray.get(i));
-
-            delimitedString = scripFolderPath.split("/");
-//            String scripId = delimitedString[6];//to be fixed
-            String scripId = scripIDList.get(i);
-
-            CsvTickData recordDataLast = new CsvTickData();
-//            recordDataLast = readCSVData(scripLast);
-            
+            CsvTickData recordDataLast = new CsvTickData();           
             
             recordDataLast = masterDataService.getLastpricerPerScripID(scripId);
             
@@ -160,79 +141,6 @@ public class GenerateCallDetails1 {
 //        System.out.println("recordTest:" + records.get(records.size() - 1).get(1));
         return records;
     }
-
-//    private List<RecordCallPrice> readCSVCallList(String csvPath, String titleFlag) {
-//        String line;
-//        List<RecordCallPrice> recordList = new ArrayList<>();
-//        RecordCallPrice record = new RecordCallPrice();
-//        try {
-//            BufferedReader brPrev = new BufferedReader(new FileReader(csvPath));
-//            if (titleFlag.equals("yes")) {
-//                line = brPrev.readLine();
-//            }
-//            while ((line = brPrev.readLine()) != null) {
-//                // use comma as separator  
-//                String[] fields = line.split(",");
-//                record.setScripID(fields[0]);
-////                record.setLastUpdateTime(fields[1]);
-//                DateFormat originalFormat = new SimpleDateFormat("MMM-dd-yyyy", Locale.ENGLISH);
-//                DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-//                try {
-//                    Date date = originalFormat.parse(fields[1]);
-//                    String formattedDate = targetFormat.format(date);
-//                    record.setLastUpdateTime(formattedDate);
-//                } catch (ParseException ex) {
-//                    record.setLastUpdateTime(fields[1]);
-//                }
-//                record.setPrice(Double.valueOf(fields[2]));
-//                record.setLastCallVersionOne(fields[3]);
-//                record.setLastCallVersionTwo(fields[4]);
-////                record.setTallyVersionOne(fields[5]);
-////                record.setTallyVersionTwo(fields[6]);
-//                record.setRetraceVersionOne(Double.valueOf(fields[5]));
-//                record.setRetraceVersionTwo(Double.valueOf(fields[6]));
-//                record.setPriceBrokerageGstOne(Double.valueOf(fields[7]));
-//                record.setPriceBrokerageGstTwo(Double.valueOf(fields[8]));
-//
-//                //fields will now contain all values    
-//                recordList.add(record);
-//                record = new RecordCallPrice();
-//            }
-//        } catch (IOException ex) {
-//            ex.printStackTrace();
-////                Logger.getLogger(PerMinuteResposeOfNSE.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-////        System.out.println("recordTest:" + records.get(records.size() - 1).get(1));
-//        return recordList;
-//    }
-
-//    private CsvTickData readCSVData(String csvPath) {
-//        CsvTickData retCsvTickData = new CsvTickData();
-//        String line;
-//        double index = 1;
-//        List<List<Double>> recordData = new ArrayList<>();
-//        List<Double> row = new ArrayList<>();
-//        String[] fields = null;
-//        try {
-//            BufferedReader brPrev = new BufferedReader(new FileReader(csvPath));
-//            line = brPrev.readLine();
-//            while ((line = brPrev.readLine()) != null) {
-//                row = new ArrayList<>();  
-//                fields = line.split(",");
-//                row.add(index);
-//                row.add(Double.valueOf(fields[3]));
-//                
-//                recordData.add(row);                
-//                index = index+1;
-//            }
-//            retCsvTickData.setTickData(recordData);  
-//            retCsvTickData.setDateTime(fields[1]);
-//        } catch (IOException ex) {
-//            ex.printStackTrace();
-////                Logger.getLogger(PerMinuteResposeOfNSE.class.getName()).log(Level.SEVERE, null, ex);
-//        }       
-//        return retCsvTickData;
-//    }
 
     private ResultData fillResult(List<List<Double>> recordData, String scripId, Date lastUpdateDate) {
 

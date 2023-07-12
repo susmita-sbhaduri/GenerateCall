@@ -10,12 +10,12 @@ package org.bhaduri.generatecall;
  */
 public class DataStoreNames {
 
-    public static final String TICKER_DATA_DETAILS = "/home/sb/Documents/java_testing/EQ_test/";
-    public static final String INPUT_CALL_DATA_PATH = "/home/sb/Documents/java_testing/calls07java.csv";
-    public static final String OUTPUT_CALL_DATA_PATH = "/home/sb/Documents/java_testing/calls07java.csv";
-    public static final String INPUT_PRICE_DATA_PATH = "/home/sb/Documents/java_testing/price06java.csv";
-    public static final String OUTPUT_PRICE_DATA_PATH = "/home/sb/Documents/java_testing/price07java.csv";
-    public static final String VALIDATE_SCRIPID = "ADANIENT";
+//    public static final String TICKER_DATA_DETAILS = "/home/sb/Documents/java_testing/EQ_test/";
+//    public static final String INPUT_CALL_DATA_PATH = "/home/sb/Documents/java_testing/calls07java.csv";
+    public static final String OUTPUT_CALL_DATA_PATH = "/home/sb/Documents/java_testing/calls12java.csv";
+//    public static final String INPUT_PRICE_DATA_PATH = "/home/sb/Documents/java_testing/price06java.csv";
+//    public static final String OUTPUT_PRICE_DATA_PATH = "/home/sb/Documents/java_testing/price07java.csv";
+    public static final String VALIDATE_SCRIPID = "BPCL";
     public static final String REV_CALL_DATA_SCRIPID = "/home/sb/Documents/java_testing/rev"+VALIDATE_SCRIPID+".csv";
 
 }
