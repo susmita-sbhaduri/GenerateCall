@@ -5,7 +5,6 @@
 package org.bhaduri.getminutedata;
 
 import static org.bhaduri.generatecall.DataStoreNames.*;
-import org.bhaduri.validatecall.ValidateCallDetails;
 
 /**
  *
@@ -14,7 +13,7 @@ import org.bhaduri.validatecall.ValidateCallDetails;
 public class GetMinuteData {
     public static void main(String[] args) {
 
-        MinuteDataForInterval minuteDataForInterval= new MinuteDataForInterval(DATA_DURATION_SEC);
+        MinuteDataForInterval minuteDataForInterval= new MinuteDataForInterval(DATA_DURATION_SEC, INPUT_INTRADAY_MINUTEDATA);
         System.out.println(minuteDataForInterval.getCompleteStatus());
 
     }
