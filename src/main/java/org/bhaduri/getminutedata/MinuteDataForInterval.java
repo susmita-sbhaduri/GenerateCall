@@ -76,38 +76,48 @@ public class MinuteDataForInterval {
 //    }
     
     public void getIntervalData() {
-        List<RecordMinute> minuteData = new ArrayList<>();
         List<RecordMinute> minuteDataForInterval = new ArrayList<>();
         RecordMinute record = new RecordMinute();
-        String line;
+        String firstLine;
+        String secondLine = null;
         String[] fields = null;
+        int k =0;
         long diffSecond = 0;
         long diffInMillies = 0;
-        minuteDataForInterval.add(minuteData.get(0)); //store the first record
+        
         Date firstDate = null;
         Date secondDate = null;
 
         try {
             BufferedReader brMinute = new BufferedReader(new FileReader(intraDayMinDataFile));
-            line = brMinute.readLine();
-
+            firstLine = brMinute.readLine();
+            
             while (true) {
-                line = brMinute.readLine();
-                if (line == null) {
+                firstLine = brMinute.readLine();
+                
+                if (firstLine == null) {
                     break;
                 } else {
-                    fields = line.split(",");
+                    k=k+1;
+                    if (k == 1) {
+                        record = createMinuteDataRec(firstLine);//first record of minutedata
+                        minuteDataForInterval.add(record);
+                        record = new RecordMinute();
+                    }
+                    
+                    fields = firstLine.split(",");
                     DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
                     try {
                         firstDate = targetFormat.parse(fields[1]);
                     } catch (ParseException ex) {
                         ex.printStackTrace();
                     }
-                    line = brMinute.readLine();
-                    if (line == null) {
+                    secondLine = brMinute.readLine();
+                    if (secondLine == null) {
                         break;
                     } else {
-                        fields = line.split(",");
+                        k=k+1;
+                        fields = secondLine.split(",");
                         try {
                             secondDate = targetFormat.parse(fields[1]);
                         } catch (ParseException ex) {
@@ -117,14 +127,7 @@ public class MinuteDataForInterval {
                             diffInMillies = Math.abs(firstDate.getTime() - secondDate.getTime());
                             diffSecond = diffSecond + TimeUnit.SECONDS.convert(diffInMillies, TimeUnit.MILLISECONDS);
                             if (diffSecond > inputInterval) {
-                                record.setScripID(fields[0]);
-                                record.setLastUpdateTime(secondDate);
-                                record.setOpenprice(Double.valueOf(fields[2]));
-                                record.setDaylastprice(Double.valueOf(fields[3]));
-                                record.setDayhighprice(Double.valueOf(fields[4]));
-                                record.setDaylowprice(Double.valueOf(fields[5]));
-                                record.setPrevcloseprice(Double.valueOf(fields[6]));
-                                record.setTotaltradedvolume(Double.valueOf(fields[7]));
+                                record = createMinuteDataRec(secondLine);
                                 minuteDataForInterval.add(record);
                                 record = new RecordMinute();
                                 diffSecond = 0;
@@ -134,6 +137,15 @@ public class MinuteDataForInterval {
                     }
 
                 }
+            }//end while
+            
+            if (firstLine == null && 
+                secondDate != minuteDataForInterval.get(minuteDataForInterval.size()-1).getLastUpdateTime()) {
+                if(diffSecond > (inputInterval/2)){
+                   record = new RecordMinute();
+                   record = createMinuteDataRec(secondLine);
+                   minuteDataForInterval.add(record);
+                }                
             }
 
         } catch (IOException ex) {
@@ -143,6 +155,26 @@ public class MinuteDataForInterval {
     }
     public String getCompleteStatus() {
         return statusString;
+    }
+    private RecordMinute createMinuteDataRec(String lineFromFile) {
+        RecordMinute record = new RecordMinute();
+        String[] fields = null;
+        DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        fields = lineFromFile.split(",");
+        record.setScripID(fields[0]);
+        try {
+            record.setLastUpdateTime(targetFormat.parse(fields[1]));
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+        record.setOpenprice(Double.valueOf(fields[2]));
+        record.setDaylastprice(Double.valueOf(fields[3]));
+        record.setDayhighprice(Double.valueOf(fields[4]));
+        record.setDaylowprice(Double.valueOf(fields[5]));
+        record.setPrevcloseprice(Double.valueOf(fields[6]));
+        record.setTotaltradedvolume(Double.valueOf(fields[7]));
+
+        return record;
     }
     
 }
