@@ -91,68 +91,60 @@ public class MinuteDataForInterval {
         try {
             BufferedReader brMinute = new BufferedReader(new FileReader(intraDayMinDataFile));
             firstLine = brMinute.readLine();
-            
-            while (true) {
-                firstLine = brMinute.readLine();
-                
-                if (firstLine == null) {
+            firstLine = brMinute.readLine();
+            k = k + 1;
+            if (k == 1) {
+                record = createMinuteDataRec(firstLine);//first record of minutedata
+                minuteDataForInterval.add(record);
+                record = new RecordMinute();
+            }
+            fields = firstLine.split(",");
+            DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            try {
+                firstDate = targetFormat.parse(fields[1]);
+            } catch (ParseException ex) {
+                ex.printStackTrace();
+            }
+            while (true) {               
+
+                secondLine = brMinute.readLine();
+                if (secondLine == null) {
                     break;
                 } else {
-                    k=k+1;
-                    if (k == 1) {
-                        record = createMinuteDataRec(firstLine);//first record of minutedata
-                        minuteDataForInterval.add(record);
-                        record = new RecordMinute();
-                    }
-                    
-                    fields = firstLine.split(",");
-                    DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+                    k = k + 1;
+                    fields = secondLine.split(",");
                     try {
-                        firstDate = targetFormat.parse(fields[1]);
+                        secondDate = targetFormat.parse(fields[1]);
                     } catch (ParseException ex) {
                         ex.printStackTrace();
                     }
-                    secondLine = brMinute.readLine();
-                    if (secondLine == null) {
-                        break;
-                    } else {
-                        k=k+1;
-                        fields = secondLine.split(",");
-                        try {
-                            secondDate = targetFormat.parse(fields[1]);
-                        } catch (ParseException ex) {
-                            ex.printStackTrace();
+                    if (secondDate != null && firstDate != null) {
+                        diffInMillies = Math.abs(firstDate.getTime() - secondDate.getTime());
+                        diffSecond = diffSecond + TimeUnit.SECONDS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+                        if (diffSecond > inputInterval) {
+                            record = createMinuteDataRec(secondLine);
+                            minuteDataForInterval.add(record);
+                            record = new RecordMinute();
+                            diffSecond = 0;
+                            firstDate = secondDate;
                         }
-                        if (secondDate != null && firstDate != null) {
-                            diffInMillies = Math.abs(firstDate.getTime() - secondDate.getTime());
-                            diffSecond = diffSecond + TimeUnit.SECONDS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-                            if (diffSecond > inputInterval) {
-                                record = createMinuteDataRec(secondLine);
-                                minuteDataForInterval.add(record);
-                                record = new RecordMinute();
-                                diffSecond = 0;
-                            }
-                        }
-                        
                     }
-
                 }
             }//end while
-            
-            if (firstLine == null && 
-                secondDate != minuteDataForInterval.get(minuteDataForInterval.size()-1).getLastUpdateTime()) {
-                if(diffSecond > (inputInterval/2)){
-                   record = new RecordMinute();
-                   record = createMinuteDataRec(secondLine);
-                   minuteDataForInterval.add(record);
-                }                
+            if (secondLine == null
+                    && secondDate != minuteDataForInterval.get(minuteDataForInterval.size() - 1).getLastUpdateTime()) {
+                if (diffSecond > (inputInterval / 2)) {
+                    record = new RecordMinute();
+                    record = createMinuteDataRec(secondLine);
+                    minuteDataForInterval.add(record);
+                }
             }
 
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-
     }
+    
     public String getCompleteStatus() {
         return statusString;
     }
