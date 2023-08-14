@@ -53,12 +53,15 @@ public class MinuteDataForInterval {
             for (int k = 1; k < minuteData.size(); k++) {
                 secondDate = minuteData.get(k).getLastUpdateTime();
                 diffInMillies = Math.abs(firstDate.getTime() - secondDate.getTime());
-                diffSecond = diffSecond + TimeUnit.SECONDS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+//                diffSecond = diffSecond + TimeUnit.SECONDS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+                diffSecond = TimeUnit.SECONDS.convert(diffInMillies, TimeUnit.MILLISECONDS);
                 if (diffSecond > inputInterval) {
                     minuteDataForInterval.add(minuteData.get(k));
 //                    record = new RecordMinute();
                     diffSecond = 0;
                     firstDate = secondDate;
+                    System.out.println("Inside loop firstDate="+firstDate);
+                    System.out.println("Inside loop secondDate="+secondDate);
                 }
             }
             if (minuteDataForInterval.get(minuteDataForInterval.size() - 1).getLastUpdateTime()
@@ -67,6 +70,7 @@ public class MinuteDataForInterval {
                     minuteDataForInterval.add(minuteData.get(minuteData.size() - 1));
                 }
             }
+            diffSecond = 0;//reset diffSecond to 0
             minuteData = new ArrayList<>();
         }
     }
