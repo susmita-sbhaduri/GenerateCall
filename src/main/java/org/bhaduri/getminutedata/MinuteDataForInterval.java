@@ -15,6 +15,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.bhaduri.datatransfer.DTO.RecordMinute;
+import org.bhaduri.generatecall.DataStoreNames;
+import org.bhaduri.generatecall.PrintMatrix;
 import org.bhaduri.minutedataaccess.entities.Minutedata;
 import org.bhaduri.minutedataaccess.services.MasterDataServices;
 
@@ -45,13 +47,14 @@ public class MinuteDataForInterval {
         
         List<String> scripIDList = new ArrayList<>();
         scripIDList = masterDataService.readScripData();
-        
         for (int i = 0; i < scripIDList.size(); i++) {
             minuteData = masterDataService.getMindataForScripid(scripIDList.get(i));
             minuteDataForInterval.add(minuteData.get(0)); //first record for a particular scripid
             firstDate = minuteData.get(0).getLastUpdateTime();
             for (int k = 1; k < minuteData.size(); k++) {
                 secondDate = minuteData.get(k).getLastUpdateTime();
+                System.out.println("Inside loop firstDate="+firstDate);
+                System.out.println("Inside loop secondDate="+secondDate);
                 diffInMillies = Math.abs(firstDate.getTime() - secondDate.getTime());
 //                diffSecond = diffSecond + TimeUnit.SECONDS.convert(diffInMillies, TimeUnit.MILLISECONDS);
                 diffSecond = TimeUnit.SECONDS.convert(diffInMillies, TimeUnit.MILLISECONDS);
@@ -60,8 +63,7 @@ public class MinuteDataForInterval {
 //                    record = new RecordMinute();
                     diffSecond = 0;
                     firstDate = secondDate;
-                    System.out.println("Inside loop firstDate="+firstDate);
-                    System.out.println("Inside loop secondDate="+secondDate);
+                   
                 }
             }
             if (minuteDataForInterval.get(minuteDataForInterval.size() - 1).getLastUpdateTime()
@@ -73,9 +75,18 @@ public class MinuteDataForInterval {
             diffSecond = 0;//reset diffSecond to 0
             minuteData = new ArrayList<>();
         }
+        printMinutes(minuteDataForInterval);
+        statusString = "print done";
     }
     
-
+    private void printMinutes(List<RecordMinute> minDataForInterval) {
+        String priceHeading = "EQ,Date,Openprice,Daylastprice,Dayhighprice,Daylowprice,Prevcloseprice,Volume";
+        String printFile = DataStoreNames.OUTPUT_MINUTEDATA_INTERVAL;
+        String callOrPrice = "call";
+        PrintMatrix printMatrix = new PrintMatrix();
+        printMatrix.printMinuteData(minDataForInterval, printFile, priceHeading);
+        System.out.println("Done");        
+    }
     
     public String getCompleteStatus() {
         return statusString;
