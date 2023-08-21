@@ -1,5 +1,5 @@
 package org.bhaduri.validatecall;
-import static org.bhaduri.generatecall.DataStoreNames.*;
+import static org.bhaduri.datatransfer.DTO.DataStoreNames.*;
 
 
 public class ValidateCall {

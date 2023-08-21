@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.bhaduri.datatransfer.DTO.RecordMinute;
-import org.bhaduri.generatecall.DataStoreNames;
+import org.bhaduri.datatransfer.DTO.DataStoreNames;
 import org.bhaduri.generatecall.PrintMatrix;
 import org.bhaduri.minutedataaccess.entities.Minutedata;
 import org.bhaduri.minutedataaccess.services.MasterDataServices;

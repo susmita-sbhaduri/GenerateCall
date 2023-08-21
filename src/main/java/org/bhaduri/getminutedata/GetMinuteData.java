@@ -4,7 +4,7 @@
  */
 package org.bhaduri.getminutedata;
 
-import static org.bhaduri.generatecall.DataStoreNames.*;
+import static org.bhaduri.datatransfer.DTO.DataStoreNames.*;
 
 /**
  *
